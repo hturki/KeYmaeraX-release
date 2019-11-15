@@ -14,7 +14,7 @@ import edu.cmu.cs.ls.keymaerax.Configuration
 
 import scala.annotation.{switch, tailrec}
 import scala.collection.immutable._
-import edu.cmu.cs.ls.keymaerax.core.{Variable, _}
+import edu.cmu.cs.ls.keymaerax.core._
 import org.apache.logging.log4j.scala.Logging
 
 /**
@@ -292,7 +292,6 @@ object KeYmaeraXParser extends Parser with TokenParser with Logging {
     case None => e match {
       case BaseVariable(name: String, _, _) if kind==ChannelsKind => Channels(Set(name))
       case Pair(left, right) if kind==ChannelsKind => Channels(elaborate(st, optok, op, kind, left).asInstanceOf[Channels].channels ++ elaborate(st, optok, op, kind, right).asInstanceOf[Channels].channels)
-      case FuncOf(_, term) if kind==ChannelsKind => elaborate(st, optok, op, kind, term)
 
       case Equal(xp: DifferentialSymbol, t) if kind==ProgramKind && !StaticSemantics.isDifferential(t)  => throw ParseException("Unexpected " + optok.tok.img + " in system of ODEs", st, optok, COMMA.img)
       case _ =>
@@ -1273,6 +1272,7 @@ object KeYmaeraXParser extends Parser with TokenParser with Logging {
       case sCompose.op => sCompose
       case sChoice.op => sChoice
       case sParallel.op => sParallel
+      case sParallelAndChannels.op => sParallelAndChannels
 
       case INVARIANT => sNone
       //case

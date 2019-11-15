@@ -266,7 +266,7 @@ object OpSpec {
   val sLoop         = UnaryOpSpec[Program](STAR,      220, PostfixFormat, unprog, Loop.apply _)
   val sDual         = UnaryOpSpec[Program](DUAL,      220, PostfixFormat, unprog, Dual.apply _)
   val sParallel   = BinaryOpSpec[Program](DOUBLE_PIPE,   225, RightAssociative, binprog, Parallel.apply _)
-  val sParallelAndChannels   = BinaryOpSpec[Expression](DOUBLE_PIPE,   226, NonAssociative, parpar, (_:String, parallel:Expression, h:Expression) => ParallelAndChannels(parallel.asInstanceOf[Parallel], h.asInstanceOf[Channels]))
+  val sParallelAndChannels   = BinaryOpSpec[Expression](AMP,   226, NonAssociative, parpar, (_:String, parallel:Expression, h:Expression) => ParallelAndChannels(parallel.asInstanceOf[Parallel], h.asInstanceOf[Channels]))
   val sCompose      = BinaryOpSpec[Program](SEMI,     230, RightAssociative, binprog, Compose.apply _) //@todo compatibility mode for parser
   val sChoice       = BinaryOpSpec[Program](CHOICE,   250, RightAssociative, binprog, Choice.apply _)
 
