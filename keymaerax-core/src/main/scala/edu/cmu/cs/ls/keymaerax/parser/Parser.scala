@@ -36,6 +36,8 @@ trait Parser extends (String => Expression) {
   /** Parse the input string in the concrete syntax as a differential dynamic logic differential program */
   val differentialProgramParser: (String => DifferentialProgram)
 
+  val channelsParser: (String => Channels)
+
   /** A pretty-printer that can write the output that this parser reads */
   val printer: PrettyPrinter
 

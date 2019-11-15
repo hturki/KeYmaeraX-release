@@ -14,7 +14,7 @@ import edu.cmu.cs.ls.keymaerax.Configuration
 
 import scala.annotation.{switch, tailrec}
 import scala.collection.immutable._
-import edu.cmu.cs.ls.keymaerax.core._
+import edu.cmu.cs.ls.keymaerax.core.{Variable, _}
 import org.apache.logging.log4j.scala.Logging
 
 /**
@@ -139,6 +139,12 @@ object KeYmaeraXParser extends Parser with TokenParser with Logging {
   }
 
   private val PSEUDOTOK = UnknownToken
+
+  override val channelsParser: (String => Channels) =
+    input => elaborate(eofState, PSEUDOTOK, OpSpec.sNone, ChannelsKind, apply(input)) match {
+      case t: Channels => t
+      case e@_ => throw ParseException("Input does not parse as a channel but as " + e.kind, e).inInput(input)
+    }
 
   override val termParser: (String => Term) =
     input => elaborate(eofState, PSEUDOTOK, OpSpec.sNone, TermKind, apply(input)) match {
@@ -284,6 +290,10 @@ object KeYmaeraXParser extends Parser with TokenParser with Logging {
     case Some(e) => e
       //@todo locations are a little off in error reporting here. Would need original operator token.
     case None => e match {
+      case BaseVariable(name: String, _, _) if kind==ChannelsKind => Channels(Set(name))
+      case Pair(left, right) if kind==ChannelsKind => Channels(elaborate(st, optok, op, kind, left).asInstanceOf[Channels].channels ++ elaborate(st, optok, op, kind, right).asInstanceOf[Channels].channels)
+      case FuncOf(_, term) if kind==ChannelsKind => elaborate(st, optok, op, kind, term)
+
       case Equal(xp: DifferentialSymbol, t) if kind==ProgramKind && !StaticSemantics.isDifferential(t)  => throw ParseException("Unexpected " + optok.tok.img + " in system of ODEs", st, optok, COMMA.img)
       case _ =>
         throw ParseException("Impossible elaboration: Operator " + op.op + " expects a " + kind + " as argument but got the " + e.kind + " "  + e.prettyString,
@@ -622,6 +632,10 @@ object KeYmaeraXParser extends Parser with TokenParser with Logging {
 //      case r :+ (tok1@Token(LDIA,_)) :+ Expr(p1:Program) :+ (tok3@Token(RDIA,_)) :+ Expr(e1)
 //        if (la==EOF || la==RPAREN || la==RBRACE || formulaBinOp(la)) && e1.kind!=FormulaKind =>
 //        reduce(st, 1, elaborate(st, OpSpec.sNone, FormulaKind, e1), r :+ tok1 :+ Expr(p1) :+ tok3)
+
+
+      case r :+ (tok1@Token(LBRACE,_)) :+ Expr(p1:Parallel) :+ (tok2@Token(AMP,_)) :+ Expr(f1) :+ (tok3@Token(RBRACE,_)) =>
+        reduce(st, 5, elaborate(st, tok2, OpSpec.sParallelAndChannels, p1, f1), r)
 
       // special case to force elaboration to DifferentialProgramConst {c} and {c,...} and {c&...}
       case r :+ (tok1@Token(LBRACE,_)) :+ Expr(e1:Variable) if la==AMP || la==COMMA || la==RBRACE =>
@@ -1258,7 +1272,7 @@ object KeYmaeraXParser extends Parser with TokenParser with Logging {
       case sDual.op => sDual
       case sCompose.op => sCompose
       case sChoice.op => sChoice
-      case sDoublePipe.op => sDoublePipe
+      case sParallel.op => sParallel
 
       case INVARIANT => sNone
       //case

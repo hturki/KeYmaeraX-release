@@ -76,6 +76,7 @@ trait BasePrettyPrinter extends PrettyPrinter {
     case FormulaKind => parser.formulaParser(print)
     case ProgramKind => parser.programParser(print)
     case DifferentialProgramKind => parser.differentialProgramParser(print)
+    case ChannelsKind => parser.channelsParser(print)
     case ExpressionKind => assert(false, "No expressions of ExpressionKind can be constructed"); ???
   }
 
@@ -224,6 +225,7 @@ class KeYmaeraXPrinter extends BasePrettyPrinter {
     case f: Formula => pp(HereP, f)
     case p: Program => pp(HereP, p)
     case f: Function => f.asString
+    case c: Channels => c.channels.mkString(", ")
   }
 
   /** True if negative numbers should get extra parentheses */
@@ -311,6 +313,8 @@ class KeYmaeraXPrinter extends BasePrettyPrinter {
     case t: UnaryCompositeProgram => wrap(pp(q++0, t.child), program) + ppOp(program)
     //case t: UnaryCompositeProgram=> (if (skipParens(t)) pp(t.child) else "{" + pp(t.child) + "}") + op(program).opcode
     case t: Compose => pwrapLeft(t, pp(q++0, t.left)) + ppOp(t) + pwrapRight(t, pp(q++1, t.right))
+    case t: Parallel => pwrapLeft(t, pp(q++0, t.left)) + ppOp(t) + pwrapRight(t, pp(q++1, t.right))
+    case t: ParallelAndChannels => "{" + pp(q++0, t.program) + " & " + t.channels.channels.mkString(", ") + "}"
     case t: BinaryCompositeProgram => pwrapLeft(t, pp(q++0, t.left)) + ppOp(t) + pwrapRight(t, pp(q++1, t.right))
   })
 

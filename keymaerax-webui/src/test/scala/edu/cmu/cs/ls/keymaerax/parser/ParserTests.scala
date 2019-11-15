@@ -104,6 +104,36 @@ class ParserTests extends FlatSpec with Matchers with BeforeAndAfterEach {
     KeYmaeraXArchiveParser(input).loneElement.model shouldBe "x>=0 -> [{x:=x+1;}*]x>=0".asFormula
   }
 
+  it should "parse parallel program definitions" in {
+    val input = """
+                  |Definitions.
+                  |  HP prg ::= { x:=x+1; }.
+                  |End.
+                  |ProgramVariables.
+                  |  R x.
+                  |End.
+                  |Problem.
+                  |  x = 1 -> [{x := 1; || x := 2;}]x = 1
+                  |End.
+    """.stripMargin
+    KeYmaeraXArchiveParser(input).loneElement.model
+  }
+
+  it should "parse parallel program definitions 2" in {
+    val input = """
+                  |Definitions.
+                  |  HP prg ::= { x:=x+1; }.
+                  |End.
+                  |ProgramVariables.
+                  |  R x.
+                  |End.
+                  |Problem.
+                  |  x = 1 -> [{x := 1; || x := 2; & x, y, z}]x = 1
+                  |End.
+    """.stripMargin
+    KeYmaeraXArchiveParser(input).loneElement.model
+  }
+
   it should "report useful message on missing semicolon in program variable declaration" in {
     val input = """ProgramVariables.
                   |  R x

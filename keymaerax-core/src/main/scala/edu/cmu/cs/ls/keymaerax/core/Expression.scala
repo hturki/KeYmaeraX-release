@@ -34,6 +34,7 @@ object ProgramKind extends Kind { override def toString = "Program" }
 object DifferentialProgramKind extends Kind/*ProgramKind.type*/ { override def toString = "DifferentialProgram" }
 /** Function/predicate symbols that are not themselves terms or formulas are of kind FunctionKind */
 object FunctionKind extends Kind { override def toString = "Function" }
+object ChannelsKind extends Kind { override def toString = "Channel" }
 
 /**
   * Sorts of expressions (real, bool, etc).
@@ -643,7 +644,16 @@ sealed trait BinaryCompositeProgram extends BinaryComposite with CompositeProgra
   val right: Program
 }
 
-case class DoublePipe(left: Program, right: Program) extends BinaryCompositeProgram { def reapply = copy }
+case class Channels(channels: Set[String]) extends Expression {
+  /** What kind of an expression this is, e.g., [[TermKind]], [[FormulaKind]], [[ProgramKind]]. */
+  override val kind: Kind = ChannelsKind
+  /** The sort of this expression, e.g., [[Real]], [[Bool]]. */
+  override val sort: Sort = Real
+}
+
+case class ParallelAndChannels(program: Parallel, channels: Channels) extends Program { }
+
+case class Parallel(left: Program, right: Program) extends BinaryCompositeProgram { def reapply = copy }
 
 /** left++right nondeterministic choice */
 case class Choice(left: Program, right: Program) extends BinaryCompositeProgram { def reapply = copy }

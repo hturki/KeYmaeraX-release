@@ -246,7 +246,8 @@ final case class USubstOne(subsDefsInput: immutable.Seq[SubstitutionPair]) exten
         (v, ODESystem(usubstODE(v, ode), usubst(v, h)))
       case Choice(a, b)      => val (v,ra) = usubst(u,a); val (w,rb) = usubst(u,b); (v++w, Choice(ra, rb))
       case Compose(a, b)     => val (v,ra) = usubst(u,a); val (w,rb) = usubst(v,b); (w, Compose(ra, rb))
-      case DoublePipe(a, b)     => val (v,ra) = usubst(u,a); val (w,rb) = usubst(v,b); (w, DoublePipe(ra, rb))
+      case ParallelAndChannels(a, _)     => usubst(u, a)
+      case Parallel(a, b)     => val (v,ra) = usubst(u,a); val (w,rb) = usubst(v,b); (w, Parallel(ra, rb))
       case Loop(a) if!optima => val (v,_)  = usubst(u,a); val (_,ra) = usubst(v,a); (v, Loop(ra))
       case Loop(a) if optima => val v = u++substBoundVars(a); val (w,ra) = usubst(v,a);
         // redundant: check result of substBoundVars for equality to make it not soundness-critical
