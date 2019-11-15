@@ -29,7 +29,7 @@ object ExpressionTraversal {
   // for convenience
   type union[T] = { type and[S] = UnionType[N[T]]#and[S] }
 
-  type FTPG[T] = union[Term]#and[Formula]#and[Program]#andProvideEvidence[T]
+  type FTPG[T] = union[Term]#and[Formula]#and[Program]#and[Channels]#andProvideEvidence[T]
 
   def fail(x: Expression) = throw new UnknownOperatorException("Unimplemented case in Expr traversal", x.asInstanceOf[Expression])
   def failFTPG[T, A : FTPG](x: A) = throw new UnknownOperatorException("Unimplemented case in Expr traversal", x.asInstanceOf[Expression])
@@ -44,12 +44,14 @@ object ExpressionTraversal {
     def preF(p: PosInExpr, e: Formula): Either[Option[StopTraversal], Formula] = Left(None)
     def preP(p: PosInExpr, e: Program): Either[Option[StopTraversal], Program] = Left(None)
     def preT(p: PosInExpr, e: Term): Either[Option[StopTraversal], Term] = Left(None)
+    def preC(p: PosInExpr, e: Channels): Either[Option[StopTraversal], Channels] = Left(None)
     def inF(p: PosInExpr, e: Formula): Either[Option[StopTraversal], Formula] = Left(None)
     def inP(p: PosInExpr, e: Program): Either[Option[StopTraversal], Program] = Left(None)
     def inT(p: PosInExpr, e: Term): Either[Option[StopTraversal], Term] = Left(None)
     def postF(p: PosInExpr, e: Formula): Either[Option[StopTraversal], Formula] = Left(None)
     def postP(p: PosInExpr, e: Program): Either[Option[StopTraversal], Program] = Left(None)
     def postT(p: PosInExpr, e: Term): Either[Option[StopTraversal], Term] = Left(None)
+    def postC(p: PosInExpr, e: Channels): Either[Option[StopTraversal], Channels] = Left(None)
   }
 
   /**
@@ -113,6 +115,11 @@ object ExpressionTraversal {
       case Left(None) => Left(None)
       case Right(a) => Right(a.asInstanceOf[A])
     }
+    case x: Channels => f.preC(p, x) match {
+      case a@Left(Some(_)) => Left(Some(stop))
+      case Left(None) => Left(None)
+      case Right(a) => Right(a.asInstanceOf[A])
+    }
   }
 
   final def in[A : FTPG](f: ExpressionTraversalFunction, p: PosInExpr, e: A): Either[Option[StopTraversal], A] = e match {
@@ -145,6 +152,11 @@ object ExpressionTraversal {
       case Right(a) => Right(a.asInstanceOf[A])
     }
     case x: Term => f.postT(p, x) match {
+      case a@Left(Some(_)) => Left(Some(stop))
+      case Left(None) => Left(None)
+      case Right(a) => Right(a.asInstanceOf[A])
+    }
+    case x: Channels => f.postC(p, x) match {
       case a@Left(Some(_)) => Left(Some(stop))
       case Left(None) => Left(None)
       case Right(a) => Right(a.asInstanceOf[A])
@@ -253,7 +265,9 @@ object ExpressionTraversal {
         case AtomicODE(x, t) => matchTwo(p, AtomicODE.apply, f, x, t)
         case DifferentialProduct(a, b) => matchTwo(p, DifferentialProduct.apply, f, a, b)
         case ODESystem(a, h) => matchTwo(p, ODESystem(_: DifferentialProgram, _: Formula), f, a, h)
-        case Parallel(a, b) => matchTwo(p, Choice.apply, f, a, b)
+        case Parallel(a, b) => matchTwo(p, Parallel.apply, f, a, b)
+        case ParallelAndChannels(a, b) => matchTwo(p, ParallelAndChannels.apply, f, a, b)
+        case Channels(_) => matchZero(p, f, e)
 
         case _ => failFTPG(e)
       }) match {

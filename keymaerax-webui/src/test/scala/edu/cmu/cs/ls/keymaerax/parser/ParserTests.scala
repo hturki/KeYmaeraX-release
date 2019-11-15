@@ -119,7 +119,7 @@ class ParserTests extends FlatSpec with Matchers with BeforeAndAfterEach {
     KeYmaeraXArchiveParser(input).loneElement.model
   }
 
-  it should "parse parallel program definitions 2" in {
+  it should "parse parallel program definitions with channels" in {
     val input = """
                   |Definitions.
                   |  HP prg ::= { x:=x+1; }.
