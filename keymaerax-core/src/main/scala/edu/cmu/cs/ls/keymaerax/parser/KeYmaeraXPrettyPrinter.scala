@@ -174,6 +174,7 @@ object FullPrettyPrinter extends BasePrettyPrinter {
 //      "{" + pp(t.left) + "}" + /*op(t).opcode + */ "{" + pp(t.right) + "}"
     case t: BinaryCompositeProgram =>
       "{" + pp(t.left) + "}" + op(t).opcode + "{" + pp(t.right) + "}"
+    case t: ParallelAndChannels => "{" + pp(t.program) + " & " + t.channels.channels.mkString(", ") + "}"
   }
 
   private def ppODE(program: DifferentialProgram): String = program match {
@@ -442,6 +443,9 @@ class KeYmaeraXPrecedencePrinter extends KeYmaeraXSkipPrinter {
   protected override def skipParensLeft(t: BinaryComposite): Boolean =
     op(t.left) < op(t) || op(t.left) <= op(t) && op(t).assoc == LeftAssociative && op(t.left).assoc == LeftAssociative
 
+  protected def skipParensLeft(t: ParallelAndChannels): Boolean =
+    op(t.program) < op(t) || op(t.program) <= op(t) && op(t).assoc == LeftAssociative && op(t.program).assoc == LeftAssociative
+
   /**
    * Whether parentheses around ``t.right`` can be skipped because they are implied.
     *
@@ -595,6 +599,7 @@ class KeYmaeraXPrettierPrinter(margin: Int) extends KeYmaeraXPrecedencePrinter {
     case t: UnaryCompositeProgram => (wrapDoc(docOf(t.child), program) + Doc.text(ppOp(program))).grouped
     case t: Compose => (pwrapLeftDoc(t, docOf(t.left)) + Doc.line + Doc.text(ppOp(t)) + pwrapRightDoc(t, docOf(t.right))).grouped
     case t: BinaryCompositeProgram => (pwrapLeftDoc(t, docOf(t.left)) + Doc.line + Doc.text(ppOp(t)) + Doc.line + pwrapRightDoc(t, docOf(t.right))).grouped
+    case t: ParallelAndChannels => (encloseText("{", docOf(t.program) + Doc.line + Doc.text(ppOp(t)) + Doc.line + Doc.text(t.channels.channels.mkString(", ")), "}")).grouped
   }
 
   protected def docOfODE(program: DifferentialProgram): Doc = program match {

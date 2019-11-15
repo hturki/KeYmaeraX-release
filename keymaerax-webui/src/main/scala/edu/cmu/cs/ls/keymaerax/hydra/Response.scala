@@ -723,6 +723,7 @@ object Helpers {
     case t: DifferentialProduct => printJson(q ++ 0, t.left, fp)::op(t, fp, "topop")::printJson(q ++ 1, t.right, fp)::Nil
     case c: DifferentialProgramConst => print(c.prettyString, fp)::Nil
     case c: ProgramConst => print(c.prettyString, fp)::Nil
+    case t: ParallelAndChannels => print("{", fp, "prg-open")::printJson(q ++ 0, t.program, fp)::print(q, "&", "topop k4-prg-op", fp)::printJson(q ++ 1, t.channels, fp)::print("}", fp, "prg-close")::Nil
   }
 
   private def printRecPrgJson(q: PosInExpr, expr: Program, fp: FormatProvider)(implicit top: Position, topExpr: Expression): List[JsValue] = expr match {
