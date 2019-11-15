@@ -229,6 +229,8 @@ object StaticSemantics {
         VCP(fv = va.fv ++ vb.fv, bv = va.bv ++ vb.bv, mbv = va.mbv.intersect(vb.mbv))
       case Compose(a, b) => val va = progVars(a); val vb = progVars(b)
         VCP(fv = va.fv ++ (vb.fv -- va.mbv), bv = va.bv ++ vb.bv, mbv = va.mbv ++ vb.mbv)
+      case DoublePipe(a, b) => val va = progVars(a); val vb = progVars(b)
+        VCP(fv = va.fv ++ (vb.fv -- va.mbv), bv = va.bv ++ vb.bv, mbv = va.mbv ++ vb.mbv)
       case Loop(a) => val va = progVars(a); VCP(fv = va.fv, bv = va.bv, mbv = bottom)
       case Dual(a) => progVars(a)
 
@@ -345,6 +347,7 @@ object StaticSemantics {
     // homomorphic cases
     case Choice(a, b)     => signature(a) ++ signature(b)
     case Compose(a, b)    => signature(a) ++ signature(b)
+    case DoublePipe(a, b)    => signature(a) ++ signature(b)
     case Loop(a)          => signature(a)
     case Dual(a)          => signature(a)
     case ODESystem(a, h)  => signature(a) ++ signature(h)

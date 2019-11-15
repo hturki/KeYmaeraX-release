@@ -264,6 +264,7 @@ object OpSpec {
   val sODESystem    = BinaryOpSpec[Expression](AMP,   150, NonAssociative, diffprogfmlprog, (_:String, ode:Expression, h:Expression) => ODESystem(ode.asInstanceOf[DifferentialProgram], h.asInstanceOf[Formula]))
   val sLoop         = UnaryOpSpec[Program](STAR,      220, PostfixFormat, unprog, Loop.apply _)
   val sDual         = UnaryOpSpec[Program](DUAL,      220, PostfixFormat, unprog, Dual.apply _)
+  val sDoublePipe   = TernaryOpSpec[Program](DOUBLE_PIPE,   225, RightAssociative, binprog, DoublePipe.apply _)
   val sCompose      = BinaryOpSpec[Program](SEMI,     230, RightAssociative, binprog, Compose.apply _) //@todo compatibility mode for parser
   val sChoice       = BinaryOpSpec[Program](CHOICE,   250, RightAssociative, binprog, Choice.apply _)
 
@@ -336,6 +337,7 @@ object OpSpec {
     case p: Loop         => sLoop
     case p: Compose      => sCompose
     case p: Choice       => sChoice
+    case p: DoublePipe       => sDoublePipe
     case p: Dual         => sDual
     case _: SystemConst  => sSystemConst
   }

@@ -1023,13 +1023,13 @@ object KeYmaeraXParser extends Parser with TokenParser with Logging {
     la==SEMI /* from tests */ ||
     la==RBRACE /* from predicationals */ ||
     la==COMMA /* from invariant annotations */ ||
-    la==PRIME || la==EOF
+    la==PRIME || la==EOF || la==DOUBLE_PIPE
 
   /** Is la a (binary) operator that only works for formulas? */
   private def formulaBinOp(la: Terminal): Boolean = la==AMP || la==OR || la==IMPLY || la==REVIMPLY || la==EQUIV
 
   /** Is la a (unary/binary) operator that only works for programs? */
-  private def programOp(la: Terminal): Boolean = la==SEMI || la==CHOICE || la==DUAL
+  private def programOp(la: Terminal): Boolean = la==SEMI || la==CHOICE || la==DUAL || la==DOUBLE_PIPE
 
   /** Follow(Term): Can la follow after a term? */
   private def followsTerm(la: Terminal): Boolean = la==RPAREN ||
@@ -1055,7 +1055,8 @@ object KeYmaeraXParser extends Parser with TokenParser with Logging {
     la==EOF ||
     la==DUAL ||              // from P in hybrid games
     la==INVARIANT ||         // extra: additional @annotations
-    la==ELSE
+    la==ELSE ||
+    la==DOUBLE_PIPE
 
   /** Follow(kind(expr)): Can la follow an expression of the kind of expr? */
   private def followsExpression(expr: Expression, la: Terminal): Boolean = expr match {
@@ -1210,6 +1211,7 @@ object KeYmaeraXParser extends Parser with TokenParser with Logging {
       case s:NUMBER/*sNumber.op*/ => sNumber
       //case t: FuncOf => sFuncOf
       case sDifferential.op => if (isVariable(st)) sDifferential else if (isFormula(st)) sDifferentialFormula else sDifferential
+
       case sPair.op => if (!kinds.isEmpty && kinds(0)!=TermKind) sDifferentialProduct else sPair
       case sMinus.op => if (kinds==List(TermKind,TermKind)||kinds==List(TermKind,ExpressionKind)) sMinus else if (kinds==List(TermKind)) sNeg
         else if (isNotPrefix(st)) sMinus else sNeg
@@ -1256,7 +1258,7 @@ object KeYmaeraXParser extends Parser with TokenParser with Logging {
       case sDual.op => sDual
       case sCompose.op => sCompose
       case sChoice.op => sChoice
-
+      case sDoublePipe.op => sDoublePipe
 
       case INVARIANT => sNone
       //case

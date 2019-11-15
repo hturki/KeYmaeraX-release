@@ -135,6 +135,9 @@ private object NOT     extends OPERATOR("!") {
   override def regexp: Regex = """\!""".r
 }
 private object AMP     extends OPERATOR("&")
+private object DOUBLE_PIPE      extends OPERATOR("||") {
+  override def regexp: Regex = """\|\|""".r
+}
 private object OR      extends OPERATOR("|") {
   override def regexp: Regex = """\|""".r
 }
@@ -599,6 +602,7 @@ object KeYmaeraXLexer extends (String => List[Token]) with Logging {
     AMP.startPattern -> ((s: String, loc: Location, _, _) => Right(consumeTerminalLength(s, AMP, loc))),
     AND_UNICODE.startPattern -> ((s: String, loc: Location, _, _) => Right(consumeUnicodeTerminalLength(s, AND_UNICODE, loc, AMP))),
     NOT.startPattern -> ((s: String, loc: Location, _, _) => Right(consumeTerminalLength(s, NOT, loc))),
+    DOUBLE_PIPE.startPattern -> ((s: String, loc: Location, _, _) => Right(consumeTerminalLength(s, DOUBLE_PIPE, loc))),
     OR.startPattern -> ((s: String, loc: Location, _, _) => Right(consumeTerminalLength(s, OR, loc))),
     OR_UNICODE.startPattern -> ((s: String, loc: Location, _, _) => Right(consumeUnicodeTerminalLength(s, OR_UNICODE, loc, OR))),
     EQUIV.startPattern -> ((s: String, loc: Location, _, _) => Right(consumeTerminalLength(s, EQUIV, loc))),

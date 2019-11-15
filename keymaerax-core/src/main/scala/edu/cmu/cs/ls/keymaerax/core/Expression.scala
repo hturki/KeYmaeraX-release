@@ -643,6 +643,7 @@ sealed trait BinaryCompositeProgram extends BinaryComposite with CompositeProgra
   val right: Program
 }
 
+case class DoublePipe(left: Program, right: Program) extends BinaryCompositeProgram { def reapply = copy }
 
 /** left++right nondeterministic choice */
 case class Choice(left: Program, right: Program) extends BinaryCompositeProgram { def reapply = copy }
