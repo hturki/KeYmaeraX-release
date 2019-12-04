@@ -182,6 +182,24 @@ class DefaultTacticIndex extends TacticIndex {
       case "assignb"  => expr match { case Box(_: Assign, _) => true case _ => false }
       case "randomb"  => expr match { case Box(_: AssignAny, _) => true case _ => false }
       case "choiceb"  => expr match { case Box(_: Choice, _) => true case _ => false }
+      case "parChoiceLb" => expr match {
+        case Box(p: ParallelAndChannels, _) =>
+          p.program match {
+            case Parallel(_: Choice, _) => true
+            case _ => false
+          }
+        case _ => false
+      }
+
+      case "parChoiceRb" => expr match {
+        case Box(p: ParallelAndChannels, _) =>
+          p.program match {
+            case Parallel(_, _: Choice) => true
+            case _ => false
+          }
+        case _ => false
+      }
+
       case "testb"    => expr match { case Box(_: Test, _) => true case _ => false }
       case "composeb" => expr match { case Box(_: Compose, _) => true case _ => false }
       case "iterateb" | "loop" | "loopauto" =>
@@ -194,6 +212,24 @@ class DefaultTacticIndex extends TacticIndex {
       case "choiced"  => expr match { case Diamond(_: Choice, _) => true case _ => false }
       case "testd"    => expr match { case Diamond(_: Test, _) => true case _ => false }
       case "composed" => expr match { case Diamond(_: Compose, _) => true case _ => false }
+
+      case "parChoiceLd" => expr match {
+        case Diamond(p: ParallelAndChannels, _) =>
+          p.program match {
+            case Parallel(_: Choice, _) => true
+            case _ => false
+          }
+        case _ => false
+      }
+
+      case "parChoiceRd" => expr match {
+        case Diamond(p: ParallelAndChannels, _) =>
+          p.program match {
+            case Parallel(_, _: Choice) => true
+            case _ => false
+          }
+        case _ => false
+      }
 
       // FOL
       case "allL" | "allR" | "all stutter" => expr.isInstanceOf[Forall]

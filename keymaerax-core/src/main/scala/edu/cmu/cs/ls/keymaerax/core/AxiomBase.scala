@@ -159,9 +159,10 @@ private[core] object AxiomBase extends Logging {
     val gany = UnitFunctional("g", AnyArg, Real)
     val a = ProgramConst("a")
     val b = ProgramConst("b")
+    val d = ProgramConst("d")
     val sys = SystemConst("a")
     val ode = DifferentialProgramConst("c", AnyArg)
-
+    val chan = Channels(Set("l"))
     val H0 = PredOf(Function("H", None, Unit, Bool), Nothing)
 
     /**
@@ -173,6 +174,7 @@ private[core] object AxiomBase extends Logging {
     assert(axs("[:=] assign equality") == Equiv(Box(Assign(x,f0), pany), Forall(Seq(x), Imply(Equal(x,f0), pany))), "[:=] assign equality")
     assert(axs("[?] test") == Equiv(Box(Test(q0), p0), Imply(q0, p0)), "[?] test")
     assert(axs("[++] choice") == Equiv(Box(Choice(a,b), pany), And(Box(a, pany), Box(b, pany))), "[++] choice")
+    assert(axs("[++ ||] parChoiceLb") == Equiv(Box(ParallelAndChannels(Parallel(Choice(a,b), d), chan), pany), And(Box(ParallelAndChannels(Parallel(a, d), chan), pany), Box(ParallelAndChannels(Parallel(b, d), chan), pany))), "[++ ||] parChoiceLb")
     assert(axs("[;] compose") == Equiv(Box(Compose(a,b), pany), Box(a, Box(b, pany))), "[;] compose")
     assert(axs("[*] iterate") == Equiv(Box(Loop(a), pany), And(pany, Box(a, Box(Loop(a), pany)))), "[*] iterate")
     //@note only sound for hybrid systems not for hybrid games
@@ -301,6 +303,10 @@ Axiom "[++] choice".
   [a;++b;]p(||) <-> ([a;]p(||) & [b;]p(||))
 End.
 
+Axiom "[++ ||] parChoiceLb".
+  [{{a;++b;}||{d;} & l}]p(||) <-> ([{a;||{d;} & l}]p(||) & [{b;||{d;} & l}]p(||))
+End.
+
 Axiom "[;] compose".
   [a;b;]p(||) <-> [a;][b;]p(||)
 End.
@@ -308,7 +314,6 @@ End.
 Axiom "[*] iterate".
   [{a;}*]p(||) <-> (p(||) & [a;][{a;}*]p(||))
 End.
-
 
 Axiom "DW base".
   [{c&q(||)}]q(||)

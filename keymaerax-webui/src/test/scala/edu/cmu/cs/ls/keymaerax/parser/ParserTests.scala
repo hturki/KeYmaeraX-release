@@ -134,6 +134,21 @@ class ParserTests extends FlatSpec with Matchers with BeforeAndAfterEach {
     KeYmaeraXArchiveParser(input).loneElement.model
   }
 
+  it should "parse parallel program definitions equiv" in {
+    val input = """
+                  |Definitions.
+                  |  HP prg ::= { x:=x+1; }.
+                  |End.
+                  |ProgramVariables.
+                  |  R x.
+                  |End.
+                  |Problem.
+                  |  [{ {a; ++ b;} || {a;} & l}]p(||) <-> ([{a;|| x := 3; & l}]p(||) & [{b; || x := 3; & l}]p(||))
+                  |End.
+    """.stripMargin
+    KeYmaeraXArchiveParser(input).loneElement.model
+  }
+
   it should "report useful message on missing semicolon in program variable declaration" in {
     val input = """ProgramVariables.
                   |  R x

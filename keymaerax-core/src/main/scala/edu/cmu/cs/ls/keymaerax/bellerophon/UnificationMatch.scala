@@ -177,6 +177,7 @@ trait BaseMatcher extends Matcher {
     case f1: Formula => unify(f1, input.asInstanceOf[Formula])
     case p1: DifferentialProgram if !p1.isInstanceOf[ODESystem] => unifyODE(p1, input.asInstanceOf[DifferentialProgram])
     case p1: Program => unify(p1, input.asInstanceOf[Program])
+    case _: Channels => if (shape==input) id else unifier(shape,input)
   }
 
   // tools
@@ -320,8 +321,10 @@ abstract class SchematicUnificationMatch extends BaseMatcher {
     case dp1: DifferentialProgram    => e2 match {case dp2: DifferentialProgram => unifyODE(dp1, dp2) case _ => ununifiable(e1, e2)}
     case Choice(a, b)                => e2 match {case Choice(a2,b2)    => unifies(a,b, a2,b2) case _ => ununifiable(e1,e2)}
     case Compose(a, b)               => e2 match {case Compose(a2,b2)   => unifies(a,b, a2,b2) case _ => ununifiable(e1,e2)}
+    case Parallel(a, b)                => e2 match {case Parallel(a2,b2)    => unifies(a,b, a2,b2) case _ => ununifiable(e1,e2)}
     case Loop(a)                     => e2 match {case Loop(a2)         => unify(a,a2) case _ => ununifiable(e1,e2)}
     case Dual(a)                     => e2 match {case Dual(a2)         => unify(a,a2) case _ => ununifiable(e1,e2)}
+    case ParallelAndChannels(p, c)   => e2 match {case ParallelAndChannels(p2, c2)         => unifies(p,c,p2,c2) case _ => ununifiable(e1,e2)}
   }
 
   /** A simple recursive unification algorithm that actually just recursive single-sided matching without occurs check */

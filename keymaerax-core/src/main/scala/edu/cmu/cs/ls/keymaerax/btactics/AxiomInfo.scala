@@ -153,6 +153,8 @@ object DerivationInfo {
     new DerivedAxiomInfo("<?> invtest", "<?>i", "invtestd", true, {case () => useAt(DerivedAxioms.invTestdAxiom)}),
     new CoreAxiomInfo("[++] choice"
       , AxiomDisplayInfo(("[∪]", "[++]"), "<span class=\"k4-axiom-key\">[a∪b]P</span>↔[a]P∧[b]P"), "choiceb", true, {case () => HilbertCalculus.choiceb}),
+    new CoreAxiomInfo("[++ ||] parChoiceLb"
+      , AxiomDisplayInfo("++ ||", "<span class=\"k4-axiom-key\">[a∪b||c]P</span>↔[a||c]P∧[b||c]P"), "parChoiceLb", true, {case () => HilbertCalculus.parChoiceLb}),
     new DerivedAxiomInfo("<++> choice", ("<∪>", "<++>"), "choiced", true, {case () => HilbertCalculus.choiced}),
     new CoreAxiomInfo("[;] compose"
       , AxiomDisplayInfo("[;]", "<span class=\"k4-axiom-key\">[a;b]P</span>↔[a][b]P")
