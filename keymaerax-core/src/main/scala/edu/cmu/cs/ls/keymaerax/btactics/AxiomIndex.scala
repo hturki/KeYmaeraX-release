@@ -233,6 +233,12 @@ object AxiomIndex extends Logging {
         case _: Test => "[?] test" :: Nil
         case _: Compose => "[;] compose" :: Nil
         case _: Choice => "[++] choice" :: Nil
+        case ParallelAndChannels(p, _) => p match {
+          case Parallel(_: Choice, _: Choice) => "[++ ||] parChoiceLb" :: "[|| ++] parChoiceRb" :: Nil
+          case Parallel(_: Choice, _) => "[++ ||] parChoiceLb" :: Nil
+          case Parallel(_, _: Choice) => "[|| ++] parChoiceRb" :: Nil
+          case _ => Nil
+        }
         case _: Dual => "[d] dual direct" :: Nil
         //@note Neither "loop" nor "[*] iterate" are automatic if invariant generator wrong and infinite unfolding useless.
 //        case _: Loop => "loop" :: "[*] iterate" :: Nil

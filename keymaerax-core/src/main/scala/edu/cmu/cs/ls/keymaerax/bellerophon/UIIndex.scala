@@ -112,6 +112,12 @@ object UIIndex {
           case _: Choice => "[++] choice" :: rules
           case _: Dual => "[d] dual direct" :: "[d] dual" :: Nil
           case _: Loop => "loop" +: (maybeSplit ++ ("[*] iterate" :: "GV" :: Nil))
+          case ParallelAndChannels(p, _) => p match {
+            case Parallel(_: Choice, _: Choice) => "[++ ||] parChoiceLb" :: "[|| ++] parChoiceRb" :: Nil
+            case Parallel(_: Choice, _) => "[++ ||] parChoiceLb" :: Nil
+            case Parallel(_, _: Choice) => "[|| ++] parChoiceRb" :: Nil
+            case _ => rules
+          }
           //@note intermediate steps in dI
           case ODESystem(ode, _) if !post.isInstanceOf[Modal] && containsPrime(post) => ode match {
             case _: AtomicODE => "DE differential effect" :: "dW" :: "dC" :: (maybeSplit :+ "GV" :+ "MR")
