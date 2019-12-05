@@ -18,6 +18,7 @@ package edu.cmu.cs.ls.keymaerax.core
 import scala.collection.immutable
 import SetLattice.bottom
 import SetLattice.allVars
+import edu.cmu.cs.ls.keymaerax.btactics.FormulaTools.dualFree
 
 /** Admissibility conditions. */
 object SubstitutionAdmissibility {
@@ -95,6 +96,8 @@ final case class SubstitutionPair (what: Expression, repl: Expression) {
     case Compose(a, b)   => dualFree(a) && dualFree(b)
     case Loop(a)         => dualFree(a)
     case Dual(a)         => false
+    case Parallel(a, b)   => dualFree(a) && dualFree(b)
+    case ParallelAndChannels(p, _)   => dualFree(p)
   }
 
 

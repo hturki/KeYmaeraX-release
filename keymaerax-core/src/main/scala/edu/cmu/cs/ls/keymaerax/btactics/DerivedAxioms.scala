@@ -1190,6 +1190,24 @@ object DerivedAxioms extends Logging {
       prop
   )
 
+  lazy val parChoiceLdAxiom = derivedAxiom("<++ ||> parChoiceLd",
+    Sequent(IndexedSeq(), IndexedSeq("<{{a;++b;}||{d;} & l}>p(||) <-> (<{a;||{d;} & l}>p(||) | <{b;||{d;} & l}>p(||))".asFormula)),
+    useAt("<> diamond", PosInExpr(1::Nil))(1, 0::Nil) &
+      useAt("[++ ||] parChoiceLb")(1, 0::0::Nil) &
+      useAt("<> diamond", PosInExpr(1::Nil))(1, 1::0::Nil) &
+      useAt("<> diamond", PosInExpr(1::Nil))(1, 1::1::Nil) &
+      prop
+  )
+
+  lazy val parChoiceRdAxiom = derivedAxiom("<|| ++> parChoiceRd",
+    Sequent(IndexedSeq(), IndexedSeq("<{a;||{b;++d;} & l}>p(||) <-> (<{a;||{b;} & l}>p(||) | <{a;||{d;} & l}>p(||))".asFormula)),
+    useAt("<> diamond", PosInExpr(1::Nil))(1, 0::Nil) &
+      useAt("[|| ++] parChoiceRb")(1, 0::0::Nil) &
+      useAt("<> diamond", PosInExpr(1::Nil))(1, 1::0::Nil) &
+      useAt("<> diamond", PosInExpr(1::Nil))(1, 1::1::Nil) &
+      prop
+  )
+
   /**
     * {{{Axiom "<;> compose".
     *    <a;b;>p(||) <-> <a;><b;>p(||)

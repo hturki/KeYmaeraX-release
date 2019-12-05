@@ -145,6 +145,12 @@ object UIIndex {
           case _: Choice => "<++> choice" :: rules
           case _: Dual => "<d> dual direct" :: "<d> dual" :: rules
           case _: Loop => "con" +: maybeSplit :+ "<*> iterate" :+ "diamondd"
+          case ParallelAndChannels(p, _) => p match {
+            case Parallel(_: Choice, _: Choice) => "<++ ||> parChoiceLd" :: "<|| ++> parChoiceRd" :: Nil
+            case Parallel(_: Choice, _) => "<++ ||> parChoiceLd" :: Nil
+            case Parallel(_, _: Choice) => "<|| ++> parChoiceRd" :: Nil
+            case _ => rules
+          }
           case _: ODESystem => "solve" :: "dC" :: rules
           case _ => rules
         }

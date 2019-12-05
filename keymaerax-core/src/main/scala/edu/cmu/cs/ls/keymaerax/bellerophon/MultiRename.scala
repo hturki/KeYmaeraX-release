@@ -174,6 +174,8 @@ final case class MultiRename(rens: immutable.Seq[(Variable,Variable)]) extends (
     case Compose(a, b)               => Compose(rename(a), rename(b))
     case Loop(a)                     => Loop(rename(a))
     case Dual(a)                     => Dual(rename(a))
+    case Parallel(a, b)              => Parallel(rename(a), rename(b))
+    case ParallelAndChannels(p, c)   => ParallelAndChannels(rename(p).asInstanceOf[Parallel], c)
   }
 
   private def renameODE(ode: DifferentialProgram): DifferentialProgram = ode match {

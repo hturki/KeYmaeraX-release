@@ -45,6 +45,8 @@ object AxiomIndex extends Logging {
     case "[?] test"    | "<?> test"    => (PosInExpr(0::Nil), PosInExpr(1::Nil)::Nil)
     case "[++ ||] parChoiceLb" => binaryDefault
     case "[|| ++] parChoiceRb" => binaryDefault
+    case "<++ ||> parChoiceLd" => binaryDefault
+    case "<|| ++> parChoiceRd" => binaryDefault
     case "[++] choice" | "<++> choice" => binaryDefault
     case "[;] compose" | "<;> compose" => (PosInExpr(0::Nil), PosInExpr(1::Nil)::PosInExpr(Nil)::Nil)
     case "[*] iterate" | "<*> iterate" => (PosInExpr(0::Nil), PosInExpr(1::Nil)::Nil)
@@ -270,6 +272,12 @@ object AxiomIndex extends Logging {
         case _: Choice => "<++> choice" :: Nil
         case _: Dual => "<d> dual direct" :: Nil
         case _: Loop => "<*> iterate" :: unknown
+        case ParallelAndChannels(p, _) => p match {
+          case Parallel(_: Choice, _: Choice) => "<++ ||> parChoiceLd" :: "<|| ++> parChoiceRd" :: Nil
+          case Parallel(_: Choice, _) => "<++ ||> parChoiceLd" :: Nil
+          case Parallel(_, _: Choice) => "<|| ++> parChoiceRd" :: Nil
+          case _ => Nil
+        }
         case _: ODESystem => logger.warn("AxiomIndex for <ODE> still missing. Use tactic ODE"); unknown
         case _ => Nil
       }
