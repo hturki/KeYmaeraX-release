@@ -50,6 +50,7 @@ final case class MultiRename(rens: immutable.Seq[(Variable,Variable)]) extends (
     case f: Formula => apply(f)
     case p: DifferentialProgram => apply(p)
     case p: Program => apply(p)
+    case c: Channels => c
   }
 
   /** apply this uniform renaming everywhere in a term */

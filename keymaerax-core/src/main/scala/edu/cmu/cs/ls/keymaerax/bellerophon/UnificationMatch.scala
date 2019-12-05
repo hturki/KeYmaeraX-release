@@ -79,7 +79,11 @@ trait Matcher extends ((Expression,Expression) => RenUSubst) with Logging {
 
 
   /** unifiable(shape, input) Compute some unifier matching `input` against the pattern `shape` if unifiable else None */
-  def unifiable(shape: Expression, input: Expression): Option[Subst] = try {Some(apply(shape, input))} catch {case e: UnificationException => logger.debug("Expression un-unifiable " + e); None}
+  def unifiable(shape: Expression, input: Expression): Option[Subst] = try {
+    Some(apply(shape, input))
+  } catch {case e: UnificationException => {
+    logger.debug("Expression un-unifiable " + e)
+  }; None}
 
   /** unifiable(shape, input) Compute some unifier matching `input` against the pattern `shape` if unifiable else None */
   def unifiable(shape: Sequent, input: Sequent): Option[Subst] = try {Some(apply(shape, input))} catch {case e: UnificationException => logger.debug("Sequent un-unifiable " + e); None}
@@ -324,7 +328,7 @@ abstract class SchematicUnificationMatch extends BaseMatcher {
     case Parallel(a, b)                => e2 match {case Parallel(a2,b2)    => unifies(a,b, a2,b2) case _ => ununifiable(e1,e2)}
     case Loop(a)                     => e2 match {case Loop(a2)         => unify(a,a2) case _ => ununifiable(e1,e2)}
     case Dual(a)                     => e2 match {case Dual(a2)         => unify(a,a2) case _ => ununifiable(e1,e2)}
-    case ParallelAndChannels(p, c)   => e2 match {case ParallelAndChannels(p2, c2)         => unifies(p,c,p2,c2) case _ => ununifiable(e1,e2)}
+    case ParallelAndChannels(p, c)   => e2 match {case ParallelAndChannels(p2, c2)         => unify(p,p2) ++ unifier(c, c2) case _ => ununifiable(e1,e2)}
   }
 
   /** A simple recursive unification algorithm that actually just recursive single-sided matching without occurs check */

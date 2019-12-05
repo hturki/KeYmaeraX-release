@@ -73,7 +73,16 @@ trait BasePrettyPrinter extends PrettyPrinter {
   /** Reparse the string print as the same kind as expr has */
   private def reparse(expr: Expression, print: String): Expression = expr.kind match {
     case TermKind => parser.termParser(print)
-    case FormulaKind => parser.formulaParser(print)
+    case FormulaKind => {
+      try {
+        parser.formulaParser(print)
+      } catch  {
+        case e: Exception => {
+          System.out.println("Failed to reparse " + print)
+          throw e
+        }
+      }
+    }
     case ProgramKind => parser.programParser(print)
     case DifferentialProgramKind => parser.differentialProgramParser(print)
     case ChannelsKind => parser.channelsParser(print)
@@ -314,7 +323,7 @@ class KeYmaeraXPrinter extends BasePrettyPrinter {
     case t: UnaryCompositeProgram => wrap(pp(q++0, t.child), program) + ppOp(program)
     //case t: UnaryCompositeProgram=> (if (skipParens(t)) pp(t.child) else "{" + pp(t.child) + "}") + op(program).opcode
     case t: Compose => pwrapLeft(t, pp(q++0, t.left)) + ppOp(t) + pwrapRight(t, pp(q++1, t.right))
-    case t: Parallel => pwrapLeft(t, pp(q++0, t.left)) + ppOp(t) + pwrapRight(t, pp(q++1, t.right))
+    case t: Parallel => pwrapLeft(t, pp(q++0, t.left)) + ppOp(t) + "{" + pp(q++1, t.right) + "}"
     case t: ParallelAndChannels => "{" + pp(q++0, t.program) + " & " + t.channels.channels.mkString(", ") + "}"
     case t: BinaryCompositeProgram => pwrapLeft(t, pp(q++0, t.left)) + ppOp(t) + pwrapRight(t, pp(q++1, t.right))
   })

@@ -246,7 +246,11 @@ final case class USubstOne(subsDefsInput: immutable.Seq[SubstitutionPair]) exten
         (v, ODESystem(usubstODE(v, ode), usubst(v, h)))
       case Choice(a, b)      => val (v,ra) = usubst(u,a); val (w,rb) = usubst(u,b); (v++w, Choice(ra, rb))
       case Compose(a, b)     => val (v,ra) = usubst(u,a); val (w,rb) = usubst(v,b); (w, Compose(ra, rb))
-      case ParallelAndChannels(a, c)     => val (v,ra) = usubst(u,a); (v, ParallelAndChannels(ra.asInstanceOf[Parallel], c))
+      case ParallelAndChannels(a, c)     => {
+        val (v,ra) = usubst(u,a)
+        val rc = if (subsDefs.exists(_.what == c)) subsDefs.find(_.what == c).get.repl.asInstanceOf[Channels] else c
+        (v, ParallelAndChannels(ra.asInstanceOf[Parallel], rc))
+      };
       case Parallel(a, b)     => val (v,ra) = usubst(u,a); val (w,rb) = usubst(v,b); (w, Parallel(ra, rb))
       case Loop(a) if!optima => val (v,_)  = usubst(u,a); val (_,ra) = usubst(v,a); (v, Loop(ra))
       case Loop(a) if optima => val v = u++substBoundVars(a); val (w,ra) = usubst(v,a);

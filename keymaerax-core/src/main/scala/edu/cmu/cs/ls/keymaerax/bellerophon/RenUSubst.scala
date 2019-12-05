@@ -395,8 +395,6 @@ final class USubstAboveURen(private[bellerophon] override val subsDefsInput: imm
   //@todo could optimize empty usubst or empty rens to be just identity application right away
   def apply(t: Term): Term = try {rens.foldLeft(usubst(t))((e,sp)=>URename(sp._1,sp._2)(e))} catch {case ex: ProverException => throw ex.inContext(t.prettyString, "with " + this)}
 
-  def apply(t: Channels): Channels = try {rens.foldLeft(usubst(t))((e,sp)=>URename(sp._1,sp._2)(e))} catch {case ex: ProverException => throw ex.inContext(t.prettyString, "with " + this)}
-
   def apply(f: Formula): Formula = try {rens.foldLeft(usubst(f))((e,sp)=>URename(sp._1,sp._2)(e))} catch {case ex: ProverException => throw ex.inContext(f.prettyString, "with " + this)}
 
   def apply(p: Program): Program = try {rens.foldLeft(usubst(p))((e,sp)=>URename(sp._1,sp._2)(e))} catch {case ex: ProverException => throw ex.inContext(p.prettyString, "with " + this)}

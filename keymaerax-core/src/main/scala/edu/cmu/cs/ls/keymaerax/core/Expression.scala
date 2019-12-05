@@ -592,6 +592,11 @@ sealed trait Program extends Expression {
 /** Atomic programs */
 sealed trait AtomicProgram extends Program with Atomic
 
+case class ChannelsConst(name: String) extends NamedSymbol with AbstractChannels {
+  override val index: Option[Int] = None
+  override val channels: Set[String] = Set(name)
+}
+
 /** Uninterpreted program constant / game symbol, limited to the given state space.
   * The semantics of ProgramConst symbol is looked up by the state,
   * with the additional promise that taboo is neither free nor bound, so the run does
@@ -644,14 +649,21 @@ sealed trait BinaryCompositeProgram extends BinaryComposite with CompositeProgra
   val right: Program
 }
 
-case class Channels(channels: Set[String]) extends Expression {
+trait AbstractChannels extends Expression {
   /** What kind of an expression this is, e.g., [[TermKind]], [[FormulaKind]], [[ProgramKind]]. */
   override val kind: Kind = ChannelsKind
   /** The sort of this expression, e.g., [[Real]], [[Bool]]. */
   override val sort: Sort = Real
+
+  val channels: Set[String]
 }
 
-case class ParallelAndChannels(program: Parallel, channels: Channels) extends Program { }
+case class Channels(channels: Set[String]) extends AbstractChannels with NamedSymbol {
+  override val name: String = if (channels.size == 1) channels.head else throw new RuntimeException(channels.toString())
+  override val index: Option[Int] = Option.empty
+}
+
+case class ParallelAndChannels(program: Parallel, channels: AbstractChannels) extends Program { }
 
 case class Parallel(left: Program, right: Program) extends BinaryCompositeProgram { def reapply = copy }
 

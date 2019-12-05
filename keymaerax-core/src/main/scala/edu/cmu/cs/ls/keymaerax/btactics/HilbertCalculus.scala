@@ -132,8 +132,9 @@ trait HilbertCalculus extends UnifyUSCalculus {
   //def diffSolve               : DependentPositionTactic = ???
   /** choiceb: [++] handles both cases of a nondeterministic choice `[a++b]p(x)` separately `[a]p(x) & [b]p(x)` */
   lazy val choiceb            : DependentPositionTactic = useAt("[++] choice")
-  /** choiceb: [++] handles both cases of a nondeterministic choice `[a++b]p(x)` separately `[a]p(x) & [b]p(x)` */
+
   lazy val parChoiceLb            : DependentPositionTactic = useAt("[++ ||] parChoiceLb")
+
   /** composeb: [;] handle both parts of a sequential composition `[a;b]p(x)` one at a time `[a][b]p(x)` */
   lazy val composeb           : DependentPositionTactic = useAt("[;] compose")
 

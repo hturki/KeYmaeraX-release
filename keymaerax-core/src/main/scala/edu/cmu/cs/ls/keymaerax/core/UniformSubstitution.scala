@@ -55,6 +55,7 @@ final case class SubstitutionPair (what: Expression, repl: Expression) {
     case _: Formula => repl.isInstanceOf[Formula]
     case _: DifferentialProgram => repl.isInstanceOf[DifferentialProgram]
     case _: Program => repl.isInstanceOf[Program]
+    case _: Channels => repl.isInstanceOf[Channels]
   }, "(redundant test) substitution to same kind of expression (terms for terms, formulas for formulas, programs for programs) " + this + " substitutes " + what.kind + " ~> " + repl.kind)
   insist(noException(matchKey), "Substitutable expression expected: " + this)
   insist(what match {
@@ -149,6 +150,7 @@ final case class SubstitutionPair (what: Expression, repl: Expression) {
     case d: DotTerm                  => d
     case DotFormula                  => DotFormula
     case Nothing => assert(repl == Nothing, "can replace Nothing only by Nothing, and nothing else"); Nothing // it makes no sense to substitute Nothing
+    case c: Channels                  => c
     case _ => throw new CoreException("Nonsubstitutable expression " + this)
   }
 
