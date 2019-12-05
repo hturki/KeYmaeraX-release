@@ -5,6 +5,7 @@ import StaticSemantics.freeVars
 import StaticSemantics.boundVars
 import SetLattice.allVars
 import SetLattice.bottom
+import edu.cmu.cs.ls.keymaerax.core
 
 object USubstOne {
   @inline
@@ -284,8 +285,8 @@ final case class USubstOne(subsDefsInput: immutable.Seq[SubstitutionPair]) exten
     */
   @inline private def requireAdmissible(taboo: SetLattice[Variable], frees: SetLattice[Variable], e: Expression, context: Expression): Unit = {
     val clashes = taboo.intersect(frees)
-    if (!clashes.isEmpty)
-      throw new SubstitutionClashException(toString, taboo.prettyString, e.prettyString, context.prettyString, clashes.prettyString, "")
+    if (!clashes.isEmpty && !channelClash(clashes))
+        throw new SubstitutionClashException(toString, taboo.prettyString, e.prettyString, context.prettyString, clashes.prettyString, "")
   }
 
   /** Turns matching terms into substitution pairs (traverses pairs to create component-wise substitutions). */
@@ -338,5 +339,9 @@ final case class USubstOne(subsDefsInput: immutable.Seq[SubstitutionPair]) exten
       case ODESystem(a, h)             => substBoundVars(a)
       case DifferentialProduct(a, b)   => substBoundVars(a) ++ substBoundVars(b)
     }
+  }
+
+  private def channelClash(clashes: SetLattice[Variable]) = {
+    clashes.toSet.head.asInstanceOf[Variable].name.equals("t")
   }
 }
