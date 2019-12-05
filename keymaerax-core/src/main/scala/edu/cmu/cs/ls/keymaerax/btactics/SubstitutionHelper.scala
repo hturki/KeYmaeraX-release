@@ -142,6 +142,10 @@ class SubstitutionHelper(what: Term, repl: Term) {
       USR(q.intersect(r), v++w, Choice(as, bs))
     case Loop(a) => val USR(_, v, _) = usubst(o, u, a); val USR(_, w, as) = usubst(o, v, a); USR(o, w, Loop(as))
     case Dual(a) => val USR(q, v, as) = usubst(o, u, a); USR(q, v, Dual(as))
+    case Parallel(a, b) =>
+      val USR(q, v, as) = usubst(o, u, a); val USR(r, w, bs) = usubst(o, u, b)
+      USR(q.intersect(r), v++w, Parallel(as, bs))
+    case ParallelAndChannels(a, c) => val USR(q, v, as) = usubst(o, u, a); USR(q, v, ParallelAndChannels(as.asInstanceOf[Parallel], c))
     case _ => throw UnknownOperatorException("Not implemented yet", p)
   }
 

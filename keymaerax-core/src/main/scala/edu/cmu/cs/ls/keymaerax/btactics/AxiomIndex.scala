@@ -43,10 +43,12 @@ object AxiomIndex extends Logging {
     case "[:=] assign update" | "<:=> assign update" => (PosInExpr(0::Nil), PosInExpr(1::Nil)::PosInExpr(Nil)::Nil)
     case "[:*] assign nondet" | "<:*> assign nondet" => (PosInExpr(0::Nil), PosInExpr(0::Nil)::PosInExpr(Nil)::Nil)
     case "[?] test"    | "<?> test"    => (PosInExpr(0::Nil), PosInExpr(1::Nil)::Nil)
-    case "[++ ||] parChoiceLb" => binaryDefault
-    case "[|| ++] parChoiceRb" => binaryDefault
-    case "<++ ||> parChoiceLd" => binaryDefault
-    case "<|| ++> parChoiceRd" => binaryDefault
+    case "[++ ||] parChoiceLb"  => binaryDefault
+    case "[|| ++] parChoiceRb"  => binaryDefault
+    case "[|| ?;] parStepTestb" => binaryDefault
+    case "<++ ||> parChoiceLd"  => binaryDefault
+    case "<|| ++> parChoiceRd"  => binaryDefault
+    case "<|| ?;> parStepTestd" => binaryDefault
     case "[++] choice" | "<++> choice" => binaryDefault
     case "[;] compose" | "<;> compose" => (PosInExpr(0::Nil), PosInExpr(1::Nil)::PosInExpr(Nil)::Nil)
     case "[*] iterate" | "<*> iterate" => (PosInExpr(0::Nil), PosInExpr(1::Nil)::Nil)
@@ -239,6 +241,10 @@ object AxiomIndex extends Logging {
           case Parallel(_: Choice, _: Choice) => "[++ ||] parChoiceLb" :: "[|| ++] parChoiceRb" :: Nil
           case Parallel(_: Choice, _) => "[++ ||] parChoiceLb" :: Nil
           case Parallel(_, _: Choice) => "[|| ++] parChoiceRb" :: Nil
+          case Parallel(l: Compose, r: Compose) => (l.left, r.left) match {
+            case (_: Test, _: Test) => "[|| ?;] parStepTestb" :: Nil
+            case _ => Nil
+          }
           case _ => Nil
         }
         case _: Dual => "[d] dual direct" :: Nil
@@ -276,6 +282,10 @@ object AxiomIndex extends Logging {
           case Parallel(_: Choice, _: Choice) => "<++ ||> parChoiceLd" :: "<|| ++> parChoiceRd" :: Nil
           case Parallel(_: Choice, _) => "<++ ||> parChoiceLd" :: Nil
           case Parallel(_, _: Choice) => "<|| ++> parChoiceRd" :: Nil
+          case Parallel(l: Compose, r: Compose) => (l.left, r.left) match {
+            case (_: Test, _: Test) => "<|| ?;> parStepTestd" :: Nil
+            case _ => Nil
+          }
           case _ => Nil
         }
         case _: ODESystem => logger.warn("AxiomIndex for <ODE> still missing. Use tactic ODE"); unknown

@@ -18,7 +18,6 @@ package edu.cmu.cs.ls.keymaerax.core
 import scala.collection.immutable
 import SetLattice.bottom
 import SetLattice.allVars
-import edu.cmu.cs.ls.keymaerax.btactics.FormulaTools.dualFree
 
 /** Admissibility conditions. */
 object SubstitutionAdmissibility {
@@ -96,8 +95,8 @@ final case class SubstitutionPair (what: Expression, repl: Expression) {
     case Compose(a, b)   => dualFree(a) && dualFree(b)
     case Loop(a)         => dualFree(a)
     case Dual(a)         => false
-    case Parallel(a, b)   => dualFree(a) && dualFree(b)
-    case ParallelAndChannels(p, _)   => dualFree(p)
+    case Parallel(a, b)  => dualFree(a) && dualFree(b)
+    case ParallelAndChannels(p, _) => dualFree(p)
   }
 
 
@@ -153,7 +152,7 @@ final case class SubstitutionPair (what: Expression, repl: Expression) {
     case d: DotTerm                  => d
     case DotFormula                  => DotFormula
     case Nothing => assert(repl == Nothing, "can replace Nothing only by Nothing, and nothing else"); Nothing // it makes no sense to substitute Nothing
-    case c: Channels                  => c
+    case c: Channels                 => c
     case _ => throw new CoreException("Nonsubstitutable expression " + this)
   }
 

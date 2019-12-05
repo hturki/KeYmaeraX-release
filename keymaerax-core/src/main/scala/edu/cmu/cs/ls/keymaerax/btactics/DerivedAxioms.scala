@@ -1208,6 +1208,15 @@ object DerivedAxioms extends Logging {
       prop
   )
 
+  lazy val parStepTestdAxiom = derivedAxiom("<|| ?;> parStepTestd",
+    Sequent(IndexedSeq(), IndexedSeq("<{?q();a;||{?v();b;} & l}>p(||) <-> (<?q();{a;||{?v();b;} & l}>p(||) | <?v();{?q();a;||{b;} & l}>p(||))".asFormula)),
+    useAt("<> diamond", PosInExpr(1::Nil))(1, 0::Nil) &
+      useAt("[|| ?;] parStepTestb")(1, 0::0::Nil) &
+      useAt("<> diamond", PosInExpr(1::Nil))(1, 1::0::Nil) &
+      useAt("<> diamond", PosInExpr(1::Nil))(1, 1::1::Nil) &
+      prop
+  )
+
   /**
     * {{{Axiom "<;> compose".
     *    <a;b;>p(||) <-> <a;><b;>p(||)

@@ -152,6 +152,7 @@ private[core] object AxiomBase extends Logging {
     val p = Function("p", None, Real, Bool)
     val pany = UnitPredicational("p", AnyArg)
     val q0 = PredOf(Function("q", None, Unit, Bool), Nothing)
+    val v0 = PredOf(Function("v", None, Unit, Bool), Nothing)
     val qany = UnitPredicational("q", AnyArg)
     val c = FuncOf(Function("c", None, Unit, Real), Nothing)
     val f0 = FuncOf(Function("f", None, Unit, Real), Nothing)
@@ -176,6 +177,9 @@ private[core] object AxiomBase extends Logging {
     assert(axs("[++] choice") == Equiv(Box(Choice(a,b), pany), And(Box(a, pany), Box(b, pany))), "[++] choice")
     assert(axs("[++ ||] parChoiceLb") == Equiv(Box(ParallelAndChannels(Parallel(Choice(a,b), d), chan), pany), And(Box(ParallelAndChannels(Parallel(a, d), chan), pany), Box(ParallelAndChannels(Parallel(b, d), chan), pany))), "[++ ||] parChoiceLb")
     assert(axs("[|| ++] parChoiceRb") == Equiv(Box(ParallelAndChannels(Parallel(a, Choice(b,d)), chan), pany), And(Box(ParallelAndChannels(Parallel(a, b), chan), pany), Box(ParallelAndChannels(Parallel(a, d), chan), pany))), "[|| ++] parChoiceRb")
+    assert(axs("[|| ?;] parStepTestb") == Equiv(Box(ParallelAndChannels(Parallel(Compose(Test(q0), a), Compose(Test(v0),b)), chan), pany),
+      And(Box(Compose(Test(q0), ParallelAndChannels(Parallel(a, Compose(Test(v0), b)), chan)), pany),
+        Box(Compose(Test(v0), ParallelAndChannels(Parallel(Compose(Test(q0), a), b), chan)), pany))), "[|| ?;] parStepTestb")
     assert(axs("[;] compose") == Equiv(Box(Compose(a,b), pany), Box(a, Box(b, pany))), "[;] compose")
     assert(axs("[*] iterate") == Equiv(Box(Loop(a), pany), And(pany, Box(a, Box(Loop(a), pany)))), "[*] iterate")
     //@note only sound for hybrid systems not for hybrid games
@@ -310,6 +314,10 @@ End.
 
 Axiom "[|| ++] parChoiceRb".
   [{a;||{b;++d;} & l}]p(||) <-> ([{a;||{b;} & l}]p(||) & [{a;||{d;} & l}]p(||))
+End.
+
+Axiom "[|| ?;] parStepTestb".
+  [{?q();a;||{?v();b;} & l}]p(||) <-> ([?q();{a;||{?v();b;} & l}]p(||) & [?v();{?q();a;||{b;} & l}]p(||))
 End.
 
 Axiom "[;] compose".

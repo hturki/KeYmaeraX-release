@@ -316,8 +316,8 @@ object FormulaTools extends Logging {
     case Compose(a, b)   => dualFree(a) && dualFree(b)
     case Loop(a)         => dualFree(a)
     case Dual(a)         => false
-    case Parallel(a, b)   => dualFree(a) && dualFree(b)
-    case ParallelAndChannels(p, _)   => dualFree(p)
+    case Parallel(a, b)  => dualFree(a) && dualFree(b)
+    case ParallelAndChannels(p, _) => dualFree(p)
   }
 
   /** Returns all terms {{{b^e}}} such that e is not a natural number occurring in given formula .

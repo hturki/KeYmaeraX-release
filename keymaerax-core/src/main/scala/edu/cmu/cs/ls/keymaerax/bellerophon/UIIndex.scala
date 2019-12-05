@@ -113,9 +113,13 @@ object UIIndex {
           case _: Dual => "[d] dual direct" :: "[d] dual" :: Nil
           case _: Loop => "loop" +: (maybeSplit ++ ("[*] iterate" :: "GV" :: Nil))
           case ParallelAndChannels(p, _) => p match {
-            case Parallel(_: Choice, _: Choice) => "[++ ||] parChoiceLb" :: "[|| ++] parChoiceRb" :: Nil
-            case Parallel(_: Choice, _) => "[++ ||] parChoiceLb" :: Nil
-            case Parallel(_, _: Choice) => "[|| ++] parChoiceRb" :: Nil
+            case Parallel(_: Choice, _: Choice) => "[++ ||] parChoiceLb" :: "[|| ++] parChoiceRb" :: rules
+            case Parallel(_: Choice, _) => "[++ ||] parChoiceLb" :: rules
+            case Parallel(_, _: Choice) => "[|| ++] parChoiceRb" :: rules
+            case Parallel(l: Compose, r: Compose) => (l.left, r.left) match {
+              case (_: Test, _: Test) => "[|| ?;] parStepTestb" :: rules
+              case _ => rules
+            }
             case _ => rules
           }
           //@note intermediate steps in dI
@@ -146,9 +150,13 @@ object UIIndex {
           case _: Dual => "<d> dual direct" :: "<d> dual" :: rules
           case _: Loop => "con" +: maybeSplit :+ "<*> iterate" :+ "diamondd"
           case ParallelAndChannels(p, _) => p match {
-            case Parallel(_: Choice, _: Choice) => "<++ ||> parChoiceLd" :: "<|| ++> parChoiceRd" :: Nil
-            case Parallel(_: Choice, _) => "<++ ||> parChoiceLd" :: Nil
-            case Parallel(_, _: Choice) => "<|| ++> parChoiceRd" :: Nil
+            case Parallel(_: Choice, _: Choice) => "<++ ||> parChoiceLd" :: "<|| ++> parChoiceRd" :: rules
+            case Parallel(_: Choice, _) => "<++ ||> parChoiceLd" :: rules
+            case Parallel(_, _: Choice) => "<|| ++> parChoiceRd" :: rules
+            case Parallel(l: Compose, r: Compose) => (l.left, r.left) match {
+              case (_: Test, _: Test) => "<|| ?;> parStepTestd" :: rules
+              case _ => rules
+            }
             case _ => rules
           }
           case _: ODESystem => "solve" :: "dC" :: rules

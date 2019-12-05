@@ -265,9 +265,9 @@ object OpSpec {
   val sODESystem    = BinaryOpSpec[Expression](AMP,   150, NonAssociative, diffprogfmlprog, (_:String, ode:Expression, h:Expression) => ODESystem(ode.asInstanceOf[DifferentialProgram], h.asInstanceOf[Formula]))
   val sLoop         = UnaryOpSpec[Program](STAR,      220, PostfixFormat, unprog, Loop.apply _)
   val sDual         = UnaryOpSpec[Program](DUAL,      220, PostfixFormat, unprog, Dual.apply _)
-  val sParallel   = BinaryOpSpec[Program](DOUBLE_PIPE,   225, RightAssociative, binprog, Parallel.apply _)
-  val sParallelAndChannels   = BinaryOpSpec[Expression](AMP,   226, NonAssociative, parpar, (_:String, parallel:Expression, h:Expression) => ParallelAndChannels(parallel.asInstanceOf[Parallel], h.asInstanceOf[Channels]))
   val sCompose      = BinaryOpSpec[Program](SEMI,     230, RightAssociative, binprog, Compose.apply _) //@todo compatibility mode for parser
+  val sParallel     = BinaryOpSpec[Program](DOUBLE_PIPE,   231, RightAssociative, binprog, Parallel.apply _)
+  val sParallelAndChannels = BinaryOpSpec[Expression](AMP,   232, NonAssociative, parpar, (_:String, parallel:Expression, h:Expression) => ParallelAndChannels(parallel.asInstanceOf[Parallel], h.asInstanceOf[Channels]))
   val sChoice       = BinaryOpSpec[Program](CHOICE,   250, RightAssociative, binprog, Choice.apply _)
 
   // pseudo tokens

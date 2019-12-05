@@ -133,10 +133,12 @@ trait HilbertCalculus extends UnifyUSCalculus {
   /** choiceb: [++] handles both cases of a nondeterministic choice `[a++b]p(x)` separately `[a]p(x) & [b]p(x)` */
   lazy val choiceb            : DependentPositionTactic = useAt("[++] choice")
 
-  lazy val parChoiceLb            : DependentPositionTactic = useAt("[++ ||] parChoiceLb")
-  lazy val parChoiceRb            : DependentPositionTactic = useAt("[|| ++] parChoiceRb")
-  lazy val parChoiceLd            : DependentPositionTactic = useAt("<++ ||> parChoiceLd")
-  lazy val parChoiceRd            : DependentPositionTactic = useAt("<|| ++> parChoiceRd")
+  lazy val parChoiceLb        : DependentPositionTactic = useAt("[++ ||] parChoiceLb")
+  lazy val parChoiceRb        : DependentPositionTactic = useAt("[|| ++] parChoiceRb")
+  lazy val parStepTestb       : DependentPositionTactic = useAt("[|| ?;] parStepTestb")
+  lazy val parChoiceLd        : DependentPositionTactic = useAt("<++ ||> parChoiceLd")
+  lazy val parChoiceRd        : DependentPositionTactic = useAt("<|| ++> parChoiceRd")
+  lazy val parStepTestd       : DependentPositionTactic = useAt("<|| ?;> parStepTestd")
 
   /** composeb: [;] handle both parts of a sequential composition `[a;b]p(x)` one at a time `[a][b]p(x)` */
   lazy val composeb           : DependentPositionTactic = useAt("[;] compose")

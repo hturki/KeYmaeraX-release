@@ -200,6 +200,18 @@ class DefaultTacticIndex extends TacticIndex {
         case _ => false
       }
 
+      case "parStepTestb" => expr match {
+        case Box(p: ParallelAndChannels, _) =>
+          p.program match {
+            case Parallel(l: Compose, r: Compose) => (l.left, r.left) match {
+              case (_: Test, _: Test) => true
+              case _ => false
+            }
+            case _ => false
+          }
+        case _ => false
+      }
+
       case "testb"    => expr match { case Box(_: Test, _) => true case _ => false }
       case "composeb" => expr match { case Box(_: Compose, _) => true case _ => false }
       case "iterateb" | "loop" | "loopauto" =>
@@ -226,6 +238,18 @@ class DefaultTacticIndex extends TacticIndex {
         case Diamond(p: ParallelAndChannels, _) =>
           p.program match {
             case Parallel(_, _: Choice) => true
+            case _ => false
+          }
+        case _ => false
+      }
+
+      case "parStepTestd" => expr match {
+        case Diamond(p: ParallelAndChannels, _) =>
+          p.program match {
+            case Parallel(l: Compose, r: Compose) => (l.left, r.left) match {
+              case (_: Test, _: Test) => true
+              case _ => false
+            }
             case _ => false
           }
         case _ => false
