@@ -134,6 +134,7 @@ trait HilbertCalculus extends UnifyUSCalculus {
   lazy val choiceb            : DependentPositionTactic = useAt("[++] choice")
 
   lazy val parChoiceLb            : DependentPositionTactic = useAt("[++ ||] parChoiceLb")
+  lazy val parChoiceRb            : DependentPositionTactic = useAt("[|| ++] parChoiceRb")
 
   /** composeb: [;] handle both parts of a sequential composition `[a;b]p(x)` one at a time `[a][b]p(x)` */
   lazy val composeb           : DependentPositionTactic = useAt("[;] compose")

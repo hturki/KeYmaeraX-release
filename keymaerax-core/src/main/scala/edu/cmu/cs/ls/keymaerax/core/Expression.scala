@@ -592,7 +592,7 @@ sealed trait Program extends Expression {
 /** Atomic programs */
 sealed trait AtomicProgram extends Program with Atomic
 
-case class ChannelsConst(name: String) extends NamedSymbol with AbstractChannels {
+case class ChannelsConst(name: String) extends NamedSymbol with ChannelsBase {
   override val index: Option[Int] = None
   override val channels: Set[String] = Set(name)
 }
@@ -649,7 +649,7 @@ sealed trait BinaryCompositeProgram extends BinaryComposite with CompositeProgra
   val right: Program
 }
 
-trait AbstractChannels extends Expression {
+trait ChannelsBase extends Expression {
   /** What kind of an expression this is, e.g., [[TermKind]], [[FormulaKind]], [[ProgramKind]]. */
   override val kind: Kind = ChannelsKind
   /** The sort of this expression, e.g., [[Real]], [[Bool]]. */
@@ -658,12 +658,12 @@ trait AbstractChannels extends Expression {
   val channels: Set[String]
 }
 
-case class Channels(channels: Set[String]) extends AbstractChannels with NamedSymbol {
+case class Channels(channels: Set[String]) extends ChannelsBase with NamedSymbol {
   override val name: String = if (channels.size == 1) channels.head else throw new RuntimeException(channels.toString())
   override val index: Option[Int] = Option.empty
 }
 
-case class ParallelAndChannels(program: Parallel, channels: AbstractChannels) extends Program { }
+case class ParallelAndChannels(program: Parallel, channels: ChannelsBase) extends Program { }
 
 case class Parallel(left: Program, right: Program) extends BinaryCompositeProgram { def reapply = copy }
 

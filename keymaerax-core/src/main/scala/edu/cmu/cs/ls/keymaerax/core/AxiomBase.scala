@@ -175,6 +175,7 @@ private[core] object AxiomBase extends Logging {
     assert(axs("[?] test") == Equiv(Box(Test(q0), p0), Imply(q0, p0)), "[?] test")
     assert(axs("[++] choice") == Equiv(Box(Choice(a,b), pany), And(Box(a, pany), Box(b, pany))), "[++] choice")
     assert(axs("[++ ||] parChoiceLb") == Equiv(Box(ParallelAndChannels(Parallel(Choice(a,b), d), chan), pany), And(Box(ParallelAndChannels(Parallel(a, d), chan), pany), Box(ParallelAndChannels(Parallel(b, d), chan), pany))), "[++ ||] parChoiceLb")
+    assert(axs("[|| ++] parChoiceRb") == Equiv(Box(ParallelAndChannels(Parallel(a, Choice(b,d)), chan), pany), And(Box(ParallelAndChannels(Parallel(a, b), chan), pany), Box(ParallelAndChannels(Parallel(a, d), chan), pany))), "[|| ++] parChoiceRb")
     assert(axs("[;] compose") == Equiv(Box(Compose(a,b), pany), Box(a, Box(b, pany))), "[;] compose")
     assert(axs("[*] iterate") == Equiv(Box(Loop(a), pany), And(pany, Box(a, Box(Loop(a), pany)))), "[*] iterate")
     //@note only sound for hybrid systems not for hybrid games
@@ -305,6 +306,10 @@ End.
 
 Axiom "[++ ||] parChoiceLb".
   [{{a;++b;}||{d;} & l}]p(||) <-> ([{a;||{d;} & l}]p(||) & [{b;||{d;} & l}]p(||))
+End.
+
+Axiom "[|| ++] parChoiceRb".
+  [{a;||{b;++d;} & l}]p(||) <-> ([{a;||{b;} & l}]p(||) & [{a;||{d;} & l}]p(||))
 End.
 
 Axiom "[;] compose".

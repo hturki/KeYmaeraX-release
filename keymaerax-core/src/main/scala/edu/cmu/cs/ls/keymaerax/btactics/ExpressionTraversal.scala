@@ -29,7 +29,7 @@ object ExpressionTraversal {
   // for convenience
   type union[T] = { type and[S] = UnionType[N[T]]#and[S] }
 
-  type FTPG[T] = union[Term]#and[Formula]#and[Program]#and[AbstractChannels]#andProvideEvidence[T]
+  type FTPG[T] = union[Term]#and[Formula]#and[Program]#and[ChannelsBase]#andProvideEvidence[T]
 
   def fail(x: Expression) = throw new UnknownOperatorException("Unimplemented case in Expr traversal", x.asInstanceOf[Expression])
   def failFTPG[T, A : FTPG](x: A) = throw new UnknownOperatorException("Unimplemented case in Expr traversal", x.asInstanceOf[Expression])
@@ -44,14 +44,14 @@ object ExpressionTraversal {
     def preF(p: PosInExpr, e: Formula): Either[Option[StopTraversal], Formula] = Left(None)
     def preP(p: PosInExpr, e: Program): Either[Option[StopTraversal], Program] = Left(None)
     def preT(p: PosInExpr, e: Term): Either[Option[StopTraversal], Term] = Left(None)
-    def preC(p: PosInExpr, e: AbstractChannels): Either[Option[StopTraversal], AbstractChannels] = Left(None)
+    def preC(p: PosInExpr, e: ChannelsBase): Either[Option[StopTraversal], ChannelsBase] = Left(None)
     def inF(p: PosInExpr, e: Formula): Either[Option[StopTraversal], Formula] = Left(None)
     def inP(p: PosInExpr, e: Program): Either[Option[StopTraversal], Program] = Left(None)
     def inT(p: PosInExpr, e: Term): Either[Option[StopTraversal], Term] = Left(None)
     def postF(p: PosInExpr, e: Formula): Either[Option[StopTraversal], Formula] = Left(None)
     def postP(p: PosInExpr, e: Program): Either[Option[StopTraversal], Program] = Left(None)
     def postT(p: PosInExpr, e: Term): Either[Option[StopTraversal], Term] = Left(None)
-    def postC(p: PosInExpr, e: AbstractChannels): Either[Option[StopTraversal], AbstractChannels] = Left(None)
+    def postC(p: PosInExpr, e: ChannelsBase): Either[Option[StopTraversal], ChannelsBase] = Left(None)
   }
 
   /**
@@ -115,7 +115,7 @@ object ExpressionTraversal {
       case Left(None) => Left(None)
       case Right(a) => Right(a.asInstanceOf[A])
     }
-    case x: AbstractChannels => f.preC(p, x) match {
+    case x: ChannelsBase => f.preC(p, x) match {
       case a@Left(Some(_)) => Left(Some(stop))
       case Left(None) => Left(None)
       case Right(a) => Right(a.asInstanceOf[A])
@@ -156,7 +156,7 @@ object ExpressionTraversal {
       case Left(None) => Left(None)
       case Right(a) => Right(a.asInstanceOf[A])
     }
-    case x: AbstractChannels => f.postC(p, x) match {
+    case x: ChannelsBase => f.postC(p, x) match {
       case a@Left(Some(_)) => Left(Some(stop))
       case Left(None) => Left(None)
       case Right(a) => Right(a.asInstanceOf[A])
