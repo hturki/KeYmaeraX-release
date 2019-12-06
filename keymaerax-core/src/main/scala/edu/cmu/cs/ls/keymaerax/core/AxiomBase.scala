@@ -156,6 +156,7 @@ private[core] object AxiomBase extends Logging {
     val qany = UnitPredicational("q", AnyArg)
     val c = FuncOf(Function("c", None, Unit, Real), Nothing)
     val f0 = FuncOf(Function("f", None, Unit, Real), Nothing)
+    val h0 = FuncOf(Function("h", None, Unit, Real), Nothing)
     val fany = UnitFunctional("f", AnyArg, Real)
     val gany = UnitFunctional("g", AnyArg, Real)
     val a = ProgramConst("a")
@@ -177,9 +178,16 @@ private[core] object AxiomBase extends Logging {
     assert(axs("[++] choice") == Equiv(Box(Choice(a,b), pany), And(Box(a, pany), Box(b, pany))), "[++] choice")
     assert(axs("[++ ||] parChoiceLb") == Equiv(Box(ParallelAndChannels(Parallel(Choice(a,b), d), chan), pany), And(Box(ParallelAndChannels(Parallel(a, d), chan), pany), Box(ParallelAndChannels(Parallel(b, d), chan), pany))), "[++ ||] parChoiceLb")
     assert(axs("[|| ++] parChoiceRb") == Equiv(Box(ParallelAndChannels(Parallel(a, Choice(b,d)), chan), pany), And(Box(ParallelAndChannels(Parallel(a, b), chan), pany), Box(ParallelAndChannels(Parallel(a, d), chan), pany))), "[|| ++] parChoiceRb")
+    assert(axs("[|| ?] parTestb") == Equiv(Box(ParallelAndChannels(Parallel(Test(q0), Test(v0)), chan), pany),
+      And(Box(Compose(Test(q0), Test(v0)), pany), Box(Compose(Test(v0), Test(q0)), pany))), "[|| ?] parTestb")
+    assert(axs("[|| :=] parAb") == Equiv(Box(ParallelAndChannels(Parallel(Assign(x,f0), Assign(y,h0)), chan), pany),
+      And(Box(Compose(Assign(x,f0), Assign(y,h0)), pany), Box(Compose(Assign(y,h0), Assign(x,f0)), pany))), "[|| :=] parAb")
     assert(axs("[|| ?;] parStepTestb") == Equiv(Box(ParallelAndChannels(Parallel(Compose(Test(q0), a), Compose(Test(v0),b)), chan), pany),
       And(Box(Compose(Test(q0), ParallelAndChannels(Parallel(a, Compose(Test(v0), b)), chan)), pany),
         Box(Compose(Test(v0), ParallelAndChannels(Parallel(Compose(Test(q0), a), b), chan)), pany))), "[|| ?;] parStepTestb")
+    assert(axs("[|| :=;] parStepAb") == Equiv(Box(ParallelAndChannels(Parallel(Compose(Assign(x,f0), a), Compose(Assign(y,h0), b)), chan), pany),
+      And(Box(Compose(Assign(x,f0), ParallelAndChannels(Parallel(a, Compose(Assign(y,h0), b)), chan)), pany),
+        Box(Compose(Assign(y,h0), ParallelAndChannels(Parallel(Compose(Assign(x,f0), a), b), chan)), pany))), "[|| :=;] parStepAb")
     assert(axs("[;] compose") == Equiv(Box(Compose(a,b), pany), Box(a, Box(b, pany))), "[;] compose")
     assert(axs("[*] iterate") == Equiv(Box(Loop(a), pany), And(pany, Box(a, Box(Loop(a), pany)))), "[*] iterate")
     //@note only sound for hybrid systems not for hybrid games
@@ -316,8 +324,20 @@ Axiom "[|| ++] parChoiceRb".
   [{a;||{b;++d;} & l}]p(||) <-> ([{a;||{b;} & l}]p(||) & [{a;||{d;} & l}]p(||))
 End.
 
+Axiom "[|| ?] parTestb".
+  [{?q();||{?v();} & l}]p(||) <-> ([{?q();?v();}]p(||) & [{?v();?q();}]p(||))
+End.
+
+Axiom "[|| :=] parAb".
+  [{x_:=f();||{y_:=h();} & l}]p(||) <-> ([{x_:=f();y_:=h();}]p(||) & [{y_:=h();x_:=f();}]p(||))
+End.
+
 Axiom "[|| ?;] parStepTestb".
   [{?q();a;||{?v();b;} & l}]p(||) <-> ([?q();{a;||{?v();b;} & l}]p(||) & [?v();{?q();a;||{b;} & l}]p(||))
+End.
+
+Axiom "[|| :=;] parStepAb".
+  [{x_:=f();a;||{y_:=h();b;} & l}]p(||) <-> ([x_:=f();{a;||{y_:=h();b;} & l}]p(||) & [y_:=h();{x_:=f();a;||{b;} & l}]p(||))
 End.
 
 Axiom "[;] compose".

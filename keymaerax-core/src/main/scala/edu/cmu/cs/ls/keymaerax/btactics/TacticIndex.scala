@@ -200,11 +200,41 @@ class DefaultTacticIndex extends TacticIndex {
         case _ => false
       }
 
+      case "parTestb" => expr match {
+        case Box(p: ParallelAndChannels, _) =>
+          p.program match {
+            case Parallel(_: Test, _: Test) => true
+            case _ => false
+          }
+        case _ => false
+      }
+
+      case "parAb" => expr match {
+        case Box(p: ParallelAndChannels, _) =>
+          p.program match {
+            case Parallel(_: Assign, _: Assign) => true
+            case _ => false
+          }
+        case _ => false
+      }
+
       case "parStepTestb" => expr match {
         case Box(p: ParallelAndChannels, _) =>
           p.program match {
             case Parallel(l: Compose, r: Compose) => (l.left, r.left) match {
               case (_: Test, _: Test) => true
+              case _ => false
+            }
+            case _ => false
+          }
+        case _ => false
+      }
+
+      case "parStepAb" => expr match {
+        case Box(p: ParallelAndChannels, _) =>
+          p.program match {
+            case Parallel(l: Compose, r: Compose) => (l.left, r.left) match {
+              case (_: Assign, _: Assign) => true
               case _ => false
             }
             case _ => false
@@ -243,11 +273,41 @@ class DefaultTacticIndex extends TacticIndex {
         case _ => false
       }
 
+      case "parTestd" => expr match {
+        case Diamond(p: ParallelAndChannels, _) =>
+          p.program match {
+            case Parallel(_: Test, _: Test) => true
+            case _ => false
+          }
+        case _ => false
+      }
+
+      case "parAd" => expr match {
+        case Diamond(p: ParallelAndChannels, _) =>
+          p.program match {
+            case Parallel(_: Assign, _: Assign) => true
+            case _ => false
+          }
+        case _ => false
+      }
+
       case "parStepTestd" => expr match {
         case Diamond(p: ParallelAndChannels, _) =>
           p.program match {
             case Parallel(l: Compose, r: Compose) => (l.left, r.left) match {
               case (_: Test, _: Test) => true
+              case _ => false
+            }
+            case _ => false
+          }
+        case _ => false
+      }
+
+      case "parStepAd" => expr match {
+        case Diamond(p: ParallelAndChannels, _) =>
+          p.program match {
+            case Parallel(l: Compose, r: Compose) => (l.left, r.left) match {
+              case (_: Assign, _: Assign) => true
               case _ => false
             }
             case _ => false

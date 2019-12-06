@@ -45,10 +45,16 @@ object AxiomIndex extends Logging {
     case "[?] test"    | "<?> test"    => (PosInExpr(0::Nil), PosInExpr(1::Nil)::Nil)
     case "[++ ||] parChoiceLb"  => binaryDefault
     case "[|| ++] parChoiceRb"  => binaryDefault
+    case "[|| ?] parTestb"      => binaryDefault
+    case "[|| :=] parAb"        => binaryDefault
     case "[|| ?;] parStepTestb" => binaryDefault
+    case "[|| :=;] parStepAb"   => binaryDefault
     case "<++ ||> parChoiceLd"  => binaryDefault
     case "<|| ++> parChoiceRd"  => binaryDefault
+    case "<|| ?> parTestd"      => binaryDefault
+    case "<|| :=> parAd"        => binaryDefault
     case "<|| ?;> parStepTestd" => binaryDefault
+    case "<|| :=;> parStepAd"   => binaryDefault
     case "[++] choice" | "<++> choice" => binaryDefault
     case "[;] compose" | "<;> compose" => (PosInExpr(0::Nil), PosInExpr(1::Nil)::PosInExpr(Nil)::Nil)
     case "[*] iterate" | "<*> iterate" => (PosInExpr(0::Nil), PosInExpr(1::Nil)::Nil)
@@ -241,8 +247,11 @@ object AxiomIndex extends Logging {
           case Parallel(_: Choice, _: Choice) => "[++ ||] parChoiceLb" :: "[|| ++] parChoiceRb" :: Nil
           case Parallel(_: Choice, _) => "[++ ||] parChoiceLb" :: Nil
           case Parallel(_, _: Choice) => "[|| ++] parChoiceRb" :: Nil
+          case Parallel(_: Test, _: Test) => "[|| ?] parTestb" :: Nil
+          case Parallel(_: Assign, _: Assign) => "[|| ?] parAb" :: Nil
           case Parallel(l: Compose, r: Compose) => (l.left, r.left) match {
             case (_: Test, _: Test) => "[|| ?;] parStepTestb" :: Nil
+            case (_: Assign, _: Assign) => "[|| ?;] parStepAb" :: Nil
             case _ => Nil
           }
           case _ => Nil
@@ -282,8 +291,11 @@ object AxiomIndex extends Logging {
           case Parallel(_: Choice, _: Choice) => "<++ ||> parChoiceLd" :: "<|| ++> parChoiceRd" :: Nil
           case Parallel(_: Choice, _) => "<++ ||> parChoiceLd" :: Nil
           case Parallel(_, _: Choice) => "<|| ++> parChoiceRd" :: Nil
+          case Parallel(_: Test, _: Test) => "<|| ?> parTestd" :: Nil
+          case Parallel(_: Assign, _: Assign) => "<|| ?> parAd" :: Nil
           case Parallel(l: Compose, r: Compose) => (l.left, r.left) match {
             case (_: Test, _: Test) => "<|| ?;> parStepTestd" :: Nil
+            case (_: Assign, _: Assign) => "<|| ?;> parStepAd" :: Nil
             case _ => Nil
           }
           case _ => Nil

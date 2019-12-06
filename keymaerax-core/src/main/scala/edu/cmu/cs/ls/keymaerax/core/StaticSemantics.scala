@@ -225,9 +225,9 @@ object StaticSemantics {
       case AtomicODE(xp@DifferentialSymbol(x), e) =>
         VCP(fv = SetLattice(x) ++ freeVars(e), bv = SetLattice(Set(x,xp)), mbv = SetLattice(Set(x,xp)))
       // combinator cases
-      case Choice(a, b) => val va = progVars(a); val vb = progVars(b)
+      case Choice(a, b)   => val va = progVars(a); val vb = progVars(b)
         VCP(fv = va.fv ++ vb.fv, bv = va.bv ++ vb.bv, mbv = va.mbv.intersect(vb.mbv))
-      case Compose(a, b) => val va = progVars(a); val vb = progVars(b)
+      case Compose(a, b)  => val va = progVars(a); val vb = progVars(b)
         VCP(fv = va.fv ++ (vb.fv -- va.mbv), bv = va.bv ++ vb.bv, mbv = va.mbv ++ vb.mbv)
       case ParallelAndChannels(p, _) => progVars(p)
       case Parallel(a, b) => val va = progVars(a); val vb = progVars(b)

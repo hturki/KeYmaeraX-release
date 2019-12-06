@@ -8,6 +8,7 @@ import edu.cmu.cs.ls.keymaerax.core.SetLattice._
 import edu.cmu.cs.ls.keymaerax.core._
 import SetLattice.allVars
 import SetLattice.bottom
+import edu.cmu.cs.ls.keymaerax.btactics.ChannelConstants
 import edu.cmu.cs.ls.keymaerax.core
 import edu.cmu.cs.ls.keymaerax.core.StaticSemantics.{apply => _, _}
 
@@ -302,7 +303,7 @@ final case class USubstRenOne(private[bellerophon] val subsDefsInput: immutable.
       case Choice(a, b)      => val (v,ra) = usubst(u,a); val (w,rb) = usubst(u,b); (v++w, Choice(ra, rb))
       case Compose(a, b)     => val (v,ra) = usubst(u,a); val (w,rb) = usubst(v,b); (w, Compose(ra, rb))
       case ParallelAndChannels(a, c) => val (v,ra) = usubst(u,a); (v, ParallelAndChannels(ra.asInstanceOf[Parallel], subsDefs.getOrElse(c, URenSubstitutionPair(c,c)).repl.asInstanceOf[Channels]))
-      case Parallel(a, b)     => val (v,ra) = usubst(u,a); val (w,rb) = usubst(v,b); (w, Parallel(ra, rb))
+      case Parallel(a, b)    => val (v,ra) = usubst(u,a); val (w,rb) = usubst(v,b); (w, Parallel(ra, rb))
       case Loop(a) if!optima => val (v,_)  = usubst(u,a); val (_,ra) = usubst(v,a); (v, Loop(ra))
       case Loop(a) if optima => val v = u++substBoundVars(a); val (w,ra) = usubst(v,a);
         // redundant: check result of substBoundVars for equality to make it not soundness-critical
@@ -390,6 +391,6 @@ final case class USubstRenOne(private[bellerophon] val subsDefsInput: immutable.
   }
 
   private def channelClash(clashes: SetLattice[Variable]) = {
-    clashes.toSet.head.asInstanceOf[Variable].name.equals("t")
+    clashes.toSet.head.asInstanceOf[Variable].name.equals(ChannelConstants.Reserved)
   }
 }

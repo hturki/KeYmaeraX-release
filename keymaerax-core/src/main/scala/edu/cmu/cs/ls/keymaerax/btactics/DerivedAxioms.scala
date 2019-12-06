@@ -1208,10 +1208,37 @@ object DerivedAxioms extends Logging {
       prop
   )
 
+  lazy val parTestdAxiom = derivedAxiom("<|| ?> parTestd",
+    Sequent(IndexedSeq(), IndexedSeq("<{?q();||{?v();} & l}>p(||) <-> (<{?q();?v();}>p(||) | <{?v();?q();}>p(||))".asFormula)),
+    useAt("<> diamond", PosInExpr(1::Nil))(1, 0::Nil) &
+      useAt("[|| ?] parTestb")(1, 0::0::Nil) &
+      useAt("<> diamond", PosInExpr(1::Nil))(1, 1::0::Nil) &
+      useAt("<> diamond", PosInExpr(1::Nil))(1, 1::1::Nil) &
+      prop
+  )
+
+  lazy val parAdAxiom = derivedAxiom("<|| :=> parAd",
+    Sequent(IndexedSeq(), IndexedSeq("<{x_:=f();||{y_:=h();} & l}>p(||) <-> (<{x_:=f();y_:=h();}>p(||) | <{y_:=h();x_:=f();}>p(||))".asFormula)),
+    useAt("<> diamond", PosInExpr(1::Nil))(1, 0::Nil) &
+      useAt("[|| :=] parAb")(1, 0::0::Nil) &
+      useAt("<> diamond", PosInExpr(1::Nil))(1, 1::0::Nil) &
+      useAt("<> diamond", PosInExpr(1::Nil))(1, 1::1::Nil) &
+      prop
+  )
+
   lazy val parStepTestdAxiom = derivedAxiom("<|| ?;> parStepTestd",
     Sequent(IndexedSeq(), IndexedSeq("<{?q();a;||{?v();b;} & l}>p(||) <-> (<?q();{a;||{?v();b;} & l}>p(||) | <?v();{?q();a;||{b;} & l}>p(||))".asFormula)),
     useAt("<> diamond", PosInExpr(1::Nil))(1, 0::Nil) &
       useAt("[|| ?;] parStepTestb")(1, 0::0::Nil) &
+      useAt("<> diamond", PosInExpr(1::Nil))(1, 1::0::Nil) &
+      useAt("<> diamond", PosInExpr(1::Nil))(1, 1::1::Nil) &
+      prop
+  )
+
+  lazy val parStepAdAxiom = derivedAxiom("<|| :=;> parStepAd",
+    Sequent(IndexedSeq(), IndexedSeq("<{x_:=f();a;||{y_:=h();b;} & l}>p(||) <-> (<x_:=f();{a;||{y_:=h();b;} & l}>p(||) | <y_:=h();{x_:=f();a;||{b;} & l}>p(||))".asFormula)),
+    useAt("<> diamond", PosInExpr(1::Nil))(1, 0::Nil) &
+      useAt("[|| :=;] parStepAb")(1, 0::0::Nil) &
       useAt("<> diamond", PosInExpr(1::Nil))(1, 1::0::Nil) &
       useAt("<> diamond", PosInExpr(1::Nil))(1, 1::1::Nil) &
       prop

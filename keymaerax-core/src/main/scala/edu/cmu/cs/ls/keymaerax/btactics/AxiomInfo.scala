@@ -153,15 +153,26 @@ object DerivationInfo {
     new DerivedAxiomInfo("<?> invtest", "<?>i", "invtestd", true, {case () => useAt(DerivedAxioms.invTestdAxiom)}),
     new CoreAxiomInfo("[++] choice"
       , AxiomDisplayInfo(("[∪]", "[++]"), "<span class=\"k4-axiom-key\">[a∪b]P</span>↔[a]P∧[b]P"), "choiceb", true, {case () => HilbertCalculus.choiceb}),
+
     new CoreAxiomInfo("[++ ||] parChoiceLb"
       , AxiomDisplayInfo("[++ ||]", "<span class=\"k4-axiom-key\">[a∪b||d,c]P</span>↔[a||d,c]P∧[b||d,c]P"), "parChoiceLb", true, {case () => HilbertCalculus.parChoiceLb}),
     new CoreAxiomInfo("[|| ++] parChoiceRb"
       , AxiomDisplayInfo("[|| ++]", "<span class=\"k4-axiom-key\">[a||b∪d,c]P</span>↔[a||b,c]P∧[a||d,c]P"), "parChoiceRb", true, {case () => HilbertCalculus.parChoiceRb}),
+    new CoreAxiomInfo("[|| ?] parTestb"
+      , AxiomDisplayInfo("[|| ?]", "<span class=\"k4-axiom-key\">[?a||?d,c]P</span>↔[?a;?d;]P∧[?d;?a;]P"), "parTestb", true, {case () => HilbertCalculus.parTestb}),
+    new CoreAxiomInfo("[|| :=] parAb"
+      , AxiomDisplayInfo("[|| :=]", "<span class=\"k4-axiom-key\">[a:=x;||d:=y;,c]P</span>↔[a:=x;d:=y;]P∧[d:=y;a:=x;]P"), "parAb", true, {case () => HilbertCalculus.parAb}),
     new CoreAxiomInfo("[|| ?;] parStepTestb"
-      , AxiomDisplayInfo("[|| ?;]", "<span class=\"k4-axiom-key\">[?a;b||?d;e,c]P</span>↔?a;(b||?d;e,c)]∧P[?d;(?a;b||e,c)]P"), "parStepTestb", true, {case () => HilbertCalculus.parStepTestb}),
+      , AxiomDisplayInfo("[|| ?;]", "<span class=\"k4-axiom-key\">[?a;b||?d;e,c]P</span>↔[?a;(b||?d;e,c)]P∧[?d;(?a;b||e,c)]P"), "parStepTestb", true, {case () => HilbertCalculus.parStepTestb}),
+    new CoreAxiomInfo("[|| :=;] parStepAb"
+      , AxiomDisplayInfo("[|| :=;]", "<span class=\"k4-axiom-key\">[a:=x;b||d:=y;e,c]P</span>↔a:=x;(b||d:=y;e,c)]∧P[d:=y;(a:=x;b||e,c)]P"), "parStepAb", true, {case () => HilbertCalculus.parStepAb}),
     new DerivedAxiomInfo("<++ ||> parChoiceLd", ("<++ ||>"), "parChoiceLd", true, {case () => HilbertCalculus.parChoiceLd}),
     new DerivedAxiomInfo("<|| ++> parChoiceRd", ("<|| ++>"), "parChoiceRd", true, {case () => HilbertCalculus.parChoiceRd}),
+    new DerivedAxiomInfo("<|| ?> parTestd", ("<|| ?>"), "parTestd", true, {case () => HilbertCalculus.parTestd}),
+    new DerivedAxiomInfo("<|| :=> parAd", ("<|| :=>"), "parAd", true, {case () => HilbertCalculus.parAd}),
     new DerivedAxiomInfo("<|| ?;> parStepTestd", ("<|| ?;>"), "parStepTestd", true, {case () => HilbertCalculus.parStepTestd}),
+    new DerivedAxiomInfo("<|| :=;> parStepAd", ("<|| :=;>"), "parStepAd", true, {case () => HilbertCalculus.parStepAd}),
+
     new DerivedAxiomInfo("<++> choice", ("<∪>", "<++>"), "choiced", true, {case () => HilbertCalculus.choiced}),
     new CoreAxiomInfo("[;] compose"
       , AxiomDisplayInfo("[;]", "<span class=\"k4-axiom-key\">[a;b]P</span>↔[a][b]P")

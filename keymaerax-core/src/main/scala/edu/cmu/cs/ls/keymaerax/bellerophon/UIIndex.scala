@@ -116,8 +116,11 @@ object UIIndex {
             case Parallel(_: Choice, _: Choice) => "[++ ||] parChoiceLb" :: "[|| ++] parChoiceRb" :: rules
             case Parallel(_: Choice, _) => "[++ ||] parChoiceLb" :: rules
             case Parallel(_, _: Choice) => "[|| ++] parChoiceRb" :: rules
+            case Parallel(_: Test, _: Test) => "[|| ?] parTestb" :: rules
+            case Parallel(_: Assign, _: Assign) => "[|| :=] parAb" :: rules
             case Parallel(l: Compose, r: Compose) => (l.left, r.left) match {
               case (_: Test, _: Test) => "[|| ?;] parStepTestb" :: rules
+              case (_: Assign, _: Assign) => "[|| :=;] parStepAb" :: rules
               case _ => rules
             }
             case _ => rules
@@ -153,8 +156,11 @@ object UIIndex {
             case Parallel(_: Choice, _: Choice) => "<++ ||> parChoiceLd" :: "<|| ++> parChoiceRd" :: rules
             case Parallel(_: Choice, _) => "<++ ||> parChoiceLd" :: rules
             case Parallel(_, _: Choice) => "<|| ++> parChoiceRd" :: rules
+            case Parallel(_: Test, _: Test) => "<|| ?> parTestd" :: rules
+            case Parallel(_: Assign, _: Assign) => "<|| :=> parAd" :: rules
             case Parallel(l: Compose, r: Compose) => (l.left, r.left) match {
               case (_: Test, _: Test) => "<|| ?;> parStepTestd" :: rules
+              case (_: Assign, _: Assign) => "<|| :=;> parStepAd" :: rules
               case _ => rules
             }
             case _ => rules
